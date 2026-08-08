@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>your safe space 🌙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night-deep:#231A34;
+    --night-mid:#372A4F;
+    --night-soft:#4A3A65;
+    --lav:#C4B2E8;
+    --amber:#F0A868;
+    --amber-soft:#F6C89A;
+    --cream:#FFF7EC;
+    --ink:#3B2E52;
+    --mood-accent:#F0A868;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; width:100%; min-height:100%;
+    background:radial-gradient(ellipse at 50% -10%, var(--night-soft) 0%, var(--night-mid) 45%, var(--night-deep) 100%);
+    font-family:'Quicksand',sans-serif;
+    color:var(--cream);
+    overflow-x:hidden;
+  }
+  #sky{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .twinkle{
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    animation:tw ease-in-out infinite;
+  }
+  @keyframes tw{
+    0%,100%{opacity:.15;}
+    50%{opacity:.9;}
+  }
+  .firefly{
+    position:absolute;
+    width:5px; height:5px;
+    background:var(--amber-soft);
+    border-radius:50%;
+    box-shadow:0 0 8px 2px rgba(240,168,104,.6);
+    animation:drift linear infinite;
+    opacity:.7;
+  }
+  @keyframes drift{
+    0%{transform:translate(0,0);}
+    50%{transform:translate(var(--dx,30px), -40px);}
+    100%{transform:translate(0,0);}
+  }
+  .moon{
+    position:fixed; top:36px; right:40px; font-size:44px; opacity:.85; z-index:1;
+    filter:drop-shadow(0 0 14px rgba(246,200,154,.5));
+  }
+
+  .garland{
+    position:relative; z-index:2;
+    display:flex; justify-content:space-evenly;
+    padding:14px 6vw 0;
+  }
+  .garland .bulb{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 10px 3px rgba(240,168,104,.55);
+    animation:glow 2.4s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%,100%{opacity:.4; transform:scale(.9);}
+    50%{opacity:1; transform:scale(1.1);}
+  }
+
+  main{
+    position:relative; z-index:2;
+    max-width:680px;
+    margin:0 auto;
+    padding:36px 22px 80px;
+  }
+
+  .hero{ text-align:center; margin-bottom:38px; }
+  h1.display{
+    font-family:'Playfair Display', serif;
+    font-style:italic; font-weight:600;
+    font-size:clamp(1.9rem,5.5vw,2.7rem);
+    color:var(--cream);
+    margin:0 0 10px;
+  }
+  .hero p{
+    color:var(--lav);
+    font-size:1.02rem;
+    line-height:1.6;
+    max-width:480px;
+    margin:0 auto;
+  }
+
+  .card{
+    background:rgba(255,247,236,.06);
+    border:1px solid rgba(255,247,236,.14);
+    border-radius:22px;
+    padding:clamp(20px,4vw,32px);
+    margin-bottom:30px;
+    backdrop-filter:blur(4px);
+  }
+
+  /* mood toggles */
+  .mood-title{
+    font-family:'Caveat',cursive;
+    font-size:1.5rem;
+    color:var(--amber-soft);
+    text-align:center;
+    margin:0 0 14px;
+  }
+  .mood-row{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+  }
+  .mood-chip{
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:.92rem;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1.5px solid rgba(255,247,236,.25);
+    background:transparent;
+    color:var(--cream);
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .mood-chip:hover{ border-color:var(--amber); transform:translateY(-1px); }
+  .mood-chip.active{
+    background:var(--mood-accent);
+    border-color:var(--mood-accent);
+    color:var(--night-deep);
+  }
+  #comfortNote{
+    text-align:center;
+    margin:18px auto 0;
+    max-width:460px;
+    line-height:1.7;
+    color:var(--lav);
+    font-size:.98rem;
+    min-height:52px;
+  }
+
+  /* let it go box */
+  .vent-title{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    color:var(--amber-soft);
+    font-size:1.35rem;
+    text-align:center;
+    margin:0 0 6px;
+  }
+  .vent-sub{
+    text-align:center;
+    color:var(--lav);
+    font-size:.92rem;
+    margin:0 0 18px;
+  }
+  .vent-wrap{ position:relative; }
+  textarea{
+    width:100%;
+    min-height:150px;
+    resize:vertical;
+    border-radius:16px;
+    border:1.5px solid rgba(255,247,236,.2);
+    background:rgba(255,247,236,.05);
+    color:var(--cream);
+    font-family:'Quicksand',sans-serif;
+    font-size:1rem;
+    line-height:1.6;
+    padding:16px;
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  textarea:focus{ border-color:var(--amber); }
+  textarea::placeholder{ color:rgba(255,247,236,.4); }
+
+  .scatter-layer{
+    position:absolute; inset:0;
+    border-radius:16px;
+    background:rgba(35,26,52,.9);
+    border:1.5px solid rgba(255,247,236,.2);
+    padding:16px;
+    display:flex; flex-wrap:wrap; align-content:flex-start;
+    overflow:hidden;
+  }
+  .scatter-word{
+    position:relative;
+    display:inline-block;
+    margin:3px 5px;
+    animation:floatUpFade 2.4s ease forwards;
+  }
+  .scatter-word .wtxt{
+    color:var(--cream);
+    font-size:1rem;
+    animation:fadeTxt 2.4s ease forwards;
+  }
+  .scatter-word .wstar{
+    position:absolute; left:0; top:0;
+    color:var(--amber-soft);
+    opacity:0;
+    animation:fadeStar 2.4s ease forwards;
+  }
+  @keyframes floatUpFade{
+    0%{ transform:translateY(0); opacity:1; }
+    75%{ opacity:1; }
+    100%{ transform:translateY(-60px); opacity:0; }
+  }
+  @keyframes fadeTxt{
+    0%,35%{opacity:1;}
+    55%,100%{opacity:0;}
+  }
+  @keyframes fadeStar{
+    0%,35%{opacity:0;}
+    55%,90%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  .vent-actions{
+    display:flex; justify-content:center; align-items:center; gap:14px;
+    margin-top:16px; flex-wrap:wrap;
+  }
+  button.release{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    padding:13px 30px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(135deg,var(--amber),#d98a4a);
+    color:var(--night-deep);
+    box-shadow:0 8px 18px rgba(240,168,104,.3);
+    transition:transform .18s ease;
+  }
+  button.release:hover{ transform:translateY(-2px) scale(1.03); }
+  button.release:active{ transform:scale(.96); }
+  #ventNote{
+    font-family:'Caveat',cursive;
+    font-size:1.15rem;
+    color:var(--amber-soft);
+    min-height:26px;
+    text-align:center;
+    opacity:0;
+    transition:opacity .5s ease;
+  }
+  #ventNote.show{ opacity:1; }
+
+  /* sweet letter */
+  .letter p{
+    line-height:1.85;
+    font-size:1.02rem;
+    color:var(--cream);
+    margin:0 0 15px;
+  }
+  .letter .verse{
+    font-family:'Caveat',cursive;
+    font-size:1.3rem;
+    color:var(--amber-soft);
+    display:block;
+    margin:16px 0;
+    padding:10px 16px;
+    border-left:3px solid var(--amber);
+    background:rgba(240,168,104,.08);
+    border-radius:0 10px 10px 0;
+  }
+  .letter .sign{
+    text-align:right;
+    font-family:'Caveat',cursive;
+    font-size:1.5rem;
+    color:var(--amber-soft);
+    margin-top:18px;
+  }
+
+  /* verse stars mini game */
+  .game-title{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    color:var(--amber-soft);
+    font-size:1.25rem;
+    text-align:center;
+    margin-bottom:4px;
+  }
+  .game-sub{ text-align:center; color:var(--lav); font-size:.9rem; margin-bottom:20px; }
+  .counter{
+    font-family:'Caveat',cursive;
+    text-align:center;
+    font-size:1.15rem;
+    color:var(--amber-soft);
+    margin-bottom:16px;
+  }
+  .star-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:14px;
+    perspective:1000px;
+  }
+  .scard{
+    height:140px;
+    cursor:pointer;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .6s cubic-bezier(.2,.9,.3,1.1);
+  }
+  .scard.flipped{ transform:rotateY(180deg); }
+  .sface{
+    position:absolute; inset:0;
+    backface-visibility:hidden;
+    border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    padding:10px; text-align:center;
+  }
+  .sface.front{
+    background:linear-gradient(150deg, rgba(240,168,104,.22), rgba(196,178,232,.22));
+    border:1px solid rgba(255,247,236,.18);
+    font-size:2.3rem;
+  }
+  .sface.front:hover{ animation:pulse .5s ease; }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
+  .sface.back{
+    background:rgba(255,247,236,.95);
+    border:1.5px solid var(--amber);
+    transform:rotateY(180deg);
+    flex-direction:column;
+  }
+  .sface.back .vtext{ font-size:.8rem; line-height:1.35; color:var(--ink); margin-bottom:5px; }
+  .sface.back .vref{ font-family:'Caveat',cursive; font-size:1rem; color:#B2683A; }
+
+  footer{
+    text-align:center;
+    margin-top:44px;
+    padding-top:26px;
+    border-top:1px dashed rgba(255,247,236,.2);
+  }
+  footer .big{
+    font-family:'Caveat',cursive;
+    font-size:clamp(1.5rem,4.5vw,2rem);
+    color:var(--amber-soft);
+  }
+  footer .tiny{ font-size:.82rem; color:var(--lav); margin-top:6px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .twinkle,.firefly,.garland .bulb{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="sky"></div>
+<div class="moon">🌙</div>
+<div class="garland" id="garland"></div>
+
+<main>
+  <div class="hero">
+    <h1 class="display">hi jaan 🤍</h1>
+    <p>this little corner is just for you. no pressure to be okay here — just breathe for a bit.</p>
+  </div>
+
+  <div class="card">
+    <div class="mood-title">how are you feeling right now?</div>
+    <div class="mood-row" id="moodRow">
+      <button class="mood-chip" data-mood="overwhelmed" data-note="when everything feels like too much at once, you don't have to hold it all together right this second. breathe. one thing at a time, jaan." data-color="#E38B6B">😮‍💨 overwhelmed</button>
+      <button class="mood-chip" data-mood="sad" data-note="it's okay to be sad. you don't need a reason that sounds 'big enough.' i'm right here." data-color="#9AA6D6">😢 sad</button>
+      <button class="mood-chip" data-mood="frustrated" data-note="family stuff can be so heavy, especially when it feels like nothing you do is enough. your frustration is valid." data-color="#E36B6B">😤 frustrated</button>
+      <button class="mood-chip" data-mood="tired" data-note="rest isn't something you have to earn. you're allowed to just stop for a bit." data-color="#B79AD6">🥱 tired</button>
+      <button class="mood-chip" data-mood="okay" data-note="even on the calmer days, i'm glad you're here. this space is yours whenever you need it." data-color="#F0A868">🙂 okay-ish</button>
+    </div>
+    <div id="comfortNote">however you're feeling right now, it's allowed. you don't have to explain it or make it smaller. i'm just glad you're here.</div>
+  </div>
+
+  <div class="card">
+    <div class="vent-title">let it out</div>
+    <div class="vent-sub">type whatever's sitting heavy on you. no one else will ever read it.</div>
+    <div class="vent-wrap">
+      <textarea id="ventBox" placeholder="type what's on your mind... it can be messy, it can be everything."></textarea>
+    </div>
+    <div class="vent-actions">
+      <button class="release" id="releaseBtn">let it drift away ✨</button>
+    </div>
+    <div id="ventNote"></div>
+  </div>
+
+  <div class="card letter">
+    <p class="verse" style="font-family:'Caveat',cursive; font-size:1.6rem; border:none; background:none; padding:0; margin-bottom:16px;">hey jaan,</p>
+    <p>i know things at home have been a lot lately. i know you're carrying more than anyone probably realizes, and that some days it feels like you're holding everything together with tape and hope.</p>
+    <p>i just want you to know — you don't have to perform "okay" for me. you can be messy, tired, angry, sad, or all of it at once. this little corner is just for you, exactly as you are.</p>
+    <span class="verse">"Come unto me, all ye that labour and are heavy laden, and I will give you rest." — Matthew 11:28</span>
+    <p>you are not too much. your feelings are not an inconvenience. and you are so much stronger than you give yourself credit for — i see it, even on the days you can't.</p>
+    <p>whenever it gets loud out there, i hope this little place can be quiet. i'm not going anywhere, jaan. not now, not ever.</p>
+    <div class="sign">— your dumbdumb 🤍</div>
+  </div>
+
+  <div class="card">
+    <div class="game-title">a little peace, hidden in the stars</div>
+    <div class="game-sub">tap a star whenever you need a small reminder</div>
+    <div class="counter"><span id="revealCount">0</span> / 8 uncovered</div>
+    <div class="star-grid" id="starGrid"></div>
+  </div>
+
+  <footer>
+    <div class="big">you are safe here. you are loved here.</div>
+    <div class="tiny">— your dumbdumb, always in your corner 🤍</div>
+  </footer>
+</main>
+
+<script>
+  // twinkling stars
+  const sky = document.getElementById('sky');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('div');
+    s.className = 'twinkle';
+    const size = Math.random()*2.2 + 1;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.top = Math.random()*100 + 'vh';
+    s.style.animationDuration = (2 + Math.random()*3) + 's';
+    s.style.animationDelay = (Math.random()*4) + 's';
+    sky.appendChild(s);
+  }
+  // fireflies
+  for(let i=0;i<14;i++){
+    const f = document.createElement('div');
+    f.className = 'firefly';
+    f.style.left = Math.random()*100 + 'vw';
+    f.style.top = Math.random()*100 + 'vh';
+    f.style.setProperty('--dx',(Math.random()*60-30)+'px');
+    f.style.animationDuration = (6+Math.random()*6)+'s';
+    sky.appendChild(f);
+  }
+  // garland bulbs
+  const garland = document.getElementById('garland');
+  for(let i=0;i<16;i++){
+    const b = document.createElement('div');
+    b.className = 'bulb';
+    b.style.animationDelay = (i*0.15)+'s';
+    garland.appendChild(b);
+  }
+
+  // mood toggles
+  const chips = document.querySelectorAll('.mood-chip');
+  const note = document.getElementById('comfortNote');
+  chips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      chips.forEach(c=>{ c.classList.remove('active'); c.style.background=''; c.style.borderColor=''; c.style.color=''; });
+      chip.classList.add('active');
+      const color = chip.dataset.color;
+      chip.style.background = color;
+      chip.style.borderColor = color;
+      chip.style.color = '#231A34';
+      note.style.opacity = 0;
+      setTimeout(()=>{
+        note.textContent = chip.dataset.note;
+        note.style.opacity = 1;
+      }, 200);
+      document.documentElement.style.setProperty('--mood-accent', color);
+    });
+  });
+
+  // let it go / release mechanic
+  const ventBox = document.getElementById('ventBox');
+  const releaseBtn = document.getElementById('releaseBtn');
+  const ventWrap = document.querySelector('.vent-wrap');
+  const ventNote = document.getElementById('ventNote');
+  const gentleNudges = [
+    "there's nothing to let go of right now — and that's okay too 🤍",
+  ];
+  const afterMessages = [
+    "it's out of your hands now 💫",
+    "let it be someone else's weight for a while 🌙",
+    "you don't have to carry that one anymore ✨"
+  ];
+
+  releaseBtn.addEventListener('click', ()=>{
+    const text = ventBox.value.trim();
+    if(!text){
+      ventNote.textContent = gentleNudges[0];
+      ventNote.classList.add('show');
+      setTimeout(()=>ventNote.classList.remove('show'), 2600);
+      return;
+    }
+    const words = text.split(/\s+/);
+    const layer = document.createElement('div');
+    layer.className = 'scatter-layer';
+    words.forEach((w,i)=>{
+      const span = document.createElement('span');
+      span.className = 'scatter-word';
+      span.style.animationDelay = (i*0.05)+'s';
+      const txt = document.createElement('span');
+      txt.className = 'wtxt';
+      txt.textContent = w;
+      txt.style.animationDelay = (i*0.05)+'s';
+      const star = document.createElement('span');
+      star.className = 'wstar';
+      star.textContent = '✨';
+      star.style.animationDelay = (i*0.05)+'s';
+      span.appendChild(txt);
+      span.appendChild(star);
+      layer.appendChild(span);
+    });
+    ventWrap.appendChild(layer);
+    ventBox.disabled = true;
+    releaseBtn.disabled = true;
+
+    const totalTime = 2400 + words.length*50 + 300;
+    setTimeout(()=>{
+      layer.remove();
+      ventBox.value = '';
+      ventBox.disabled = false;
+      releaseBtn.disabled = false;
+      const msg = afterMessages[Math.floor(Math.random()*afterMessages.length)];
+      ventNote.textContent = msg;
+      ventNote.classList.add('show');
+      setTimeout(()=>ventNote.classList.remove('show'), 3200);
+    }, totalTime);
+  });
+
+  // verse mini game
+  const verses = [
+    {t:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.", r:"Matthew 11:28"},
+    {t:"Cast thy burden upon the LORD, and he shall sustain thee: he shall never suffer the righteous to be moved.", r:"Psalm 55:22"},
+    {t:"God is our refuge and strength, a very present help in trouble.", r:"Psalm 46:1"},
+    {t:"They that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.", r:"Isaiah 40:31"},
+    {t:"Peace I leave with you, my peace I give unto you... let not your heart be troubled, neither let it be afraid.", r:"John 14:27"},
+    {t:"Be careful for nothing; but in every thing by prayer and supplication let your requests be made known unto God.", r:"Philippians 4:6"},
+    {t:"Weeping may endure for a night, but joy cometh in the morning.", r:"Psalm 30:5"},
+    {t:"It is of the LORD's mercies that we are not consumed... they are new every morning.", r:"Lamentations 3:22-23"}
+  ];
+  const starGrid = document.getElementById('starGrid');
+  let revealed = 0;
+  verses.forEach(v=>{
+    const card = document.createElement('div');
+    card.className = 'scard';
+    card.innerHTML = `
+      <div class="sface front">⭐</div>
+      <div class="sface back">
+        <div class="vtext">"${v.t}"</div>
+        <div class="vref">${v.r}</div>
+      </div>
+    `;
+    card.addEventListener('click', ()=>{
+      if(!card.classList.contains('flipped')){
+        revealed++;
+        document.getElementById('revealCount').textContent = revealed;
+      }
+      card.classList.toggle('flipped');
+    });
+    starGrid.appendChild(card);
+  });
+</script>
+
+</body>
+</html>

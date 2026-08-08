@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hi baby 🤍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF6F1;
+    --blush:#FFD9E1;
+    --rose:#E8607B;
+    --rose-deep:#B23A55;
+    --plum:#6E2B42;
+    --gold:#D9A566;
+    --line:#f3c9d1;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    width:100%;min-height:100%;
+    background:linear-gradient(160deg,var(--cream) 0%,#FFEFE9 40%,#FFE3EA 100%);
+    font-family:'Quicksand',sans-serif;
+    color:var(--plum);
+    overflow-x:hidden;
+  }
+  #stage{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .screen{
+    position:relative;
+    z-index:5;
+    max-width:640px;
+    width:100%;
+    text-align:center;
+    display:none;
+    animation:riseIn .7s ease forwards;
+  }
+  .screen.active{display:block;}
+  @keyframes riseIn{
+    from{opacity:0; transform:translateY(18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  h1.display{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-weight:600;
+    color:var(--rose-deep);
+    font-size:clamp(2rem, 6vw, 3.2rem);
+    margin:0 0 8px;
+  }
+  .script{
+    font-family:'Caveat',cursive;
+    font-size:clamp(1.6rem,5vw,2.4rem);
+    color:var(--rose);
+    font-weight:700;
+  }
+  p.sub{
+    font-size:1.05rem;
+    color:#8a4a5a;
+    margin:10px auto 28px;
+    max-width:480px;
+    line-height:1.6;
+  }
+  .btn-row{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+    position:relative;
+    min-height:70px;
+  }
+  button{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    padding:14px 34px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease;
+    box-shadow:0 6px 16px rgba(178,58,85,.25);
+  }
+  button:active{transform:scale(.96);}
+  .btn-yes{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff;
+  }
+  .btn-yes:hover{transform:translateY(-2px) scale(1.04); box-shadow:0 10px 22px rgba(178,58,85,.35);}
+  .btn-no{
+    background:#fff;
+    color:var(--rose-deep);
+    border:2px solid var(--line);
+    position:relative;
+  }
+  .btn-no.dodging{
+    position:absolute;
+  }
+  .heart-emoji{display:inline-block;}
+
+  /* floating hearts + roses background */
+  .fx-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:1;
+  }
+  .drift{
+    position:absolute;
+    bottom:-60px;
+    font-size:24px;
+    opacity:.75;
+    animation:floatUp linear forwards;
+    filter:drop-shadow(0 2px 6px rgba(178,58,85,.15));
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(0) translateX(0) rotate(0deg); opacity:0;}
+    8%{opacity:.85;}
+    100%{transform:translateY(-115vh) translateX(var(--drift-x,20px)) rotate(var(--drift-r,25deg)); opacity:0;}
+  }
+  .corner-rose{
+    position:fixed;
+    font-size:56px;
+    opacity:.5;
+    z-index:1;
+    filter:drop-shadow(0 4px 10px rgba(178,58,85,.15));
+  }
+  .corner-rose.tl{top:-10px; left:-10px; transform:rotate(-20deg);}
+  .corner-rose.br{bottom:-10px; right:-10px; transform:rotate(160deg);}
+
+  /* final letter screen */
+  .letter-card{
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(6px);
+    border:1px solid var(--line);
+    border-radius:28px;
+    padding:clamp(24px,5vw,48px);
+    text-align:left;
+    box-shadow:0 20px 50px rgba(178,58,85,.15);
+  }
+  .letter-card p{
+    line-height:1.85;
+    font-size:1.05rem;
+    margin:0 0 16px;
+    color:#5f2b3c;
+  }
+  .verse-inline{
+    font-family:'Caveat',cursive;
+    font-size:1.4rem;
+    color:var(--rose-deep);
+    display:block;
+    margin:18px 0;
+    padding:12px 18px;
+    border-left:3px solid var(--gold);
+    background:rgba(217,165,102,.08);
+    border-radius:0 12px 12px 0;
+  }
+  .sign-off{
+    text-align:right;
+    font-family:'Caveat',cursive;
+    font-size:1.7rem;
+    color:var(--rose-deep);
+    margin-top:24px;
+  }
+
+  /* mini game */
+  .game-wrap{
+    margin-top:44px;
+    text-align:center;
+  }
+  .game-title{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    color:var(--rose-deep);
+    font-size:1.4rem;
+    margin-bottom:4px;
+  }
+  .game-sub{
+    color:#8a4a5a;
+    font-size:.95rem;
+    margin-bottom:22px;
+  }
+  .counter{
+    font-family:'Caveat',cursive;
+    font-size:1.3rem;
+    color:var(--gold);
+    margin-bottom:18px;
+  }
+  .heart-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:16px;
+    perspective:1000px;
+  }
+  .card{
+    height:150px;
+    cursor:pointer;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .6s cubic-bezier(.2,.9,.3,1.1);
+  }
+  .card.flipped{transform:rotateY(180deg);}
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
+  }
+  .face.front{
+    background:linear-gradient(150deg,var(--blush),#ffc2d1);
+    font-size:2.6rem;
+    box-shadow:0 8px 18px rgba(178,58,85,.18);
+  }
+  .face.front:hover{animation:pulse .5s ease;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  .face.back{
+    background:#fff;
+    border:1.5px solid var(--gold);
+    transform:rotateY(180deg);
+    flex-direction:column;
+    text-align:center;
+  }
+  .face.back .vtext{
+    font-size:.82rem;
+    line-height:1.35;
+    color:#5f2b3c;
+    margin-bottom:6px;
+  }
+  .face.back .vref{
+    font-family:'Caveat',cursive;
+    font-size:1.05rem;
+    color:var(--rose-deep);
+  }
+
+  .final-signature{
+    text-align:center;
+    margin-top:52px;
+    padding-top:28px;
+    border-top:1px dashed var(--line);
+  }
+  .final-signature .big{
+    font-family:'Caveat',cursive;
+    font-size:clamp(1.8rem,5vw,2.6rem);
+    color:var(--rose-deep);
+  }
+  .final-signature .tiny{
+    font-size:.85rem;
+    color:#a56d7a;
+    margin-top:6px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .drift{animation:none; display:none;}
+    .screen{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="fx-layer" id="fxLayer"></div>
+<div class="corner-rose tl">🌹</div>
+<div class="corner-rose br">🌹</div>
+
+<div id="stage">
+
+  <!-- Screen 1 -->
+  <section class="screen active" id="screen-hi">
+    <h1 class="display">hi babyyy <span class="heart-emoji">🤍</span></h1>
+    <p class="sub">i made you something small. tap in?</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="showScreen('screen-ask')">hi ✨</button>
+    </div>
+  </section>
+
+  <!-- Screen 2: ask -->
+  <section class="screen" id="screen-ask">
+    <h1 class="display">do you love me<br>and want me? 🥺</h1>
+    <div class="btn-row" id="askRow">
+      <button class="btn-yes" onclick="showScreen('screen-final'); revealLetter();">yes 💗</button>
+      <button class="btn-no" id="noBtn1" onmouseenter="dodge(this)" onclick="showScreen('screen-sure')">no</button>
+    </div>
+  </section>
+
+  <!-- Screen 2b: are you sure -->
+  <section class="screen" id="screen-sure">
+    <h1 class="display">are you sure? 🥹</h1>
+    <p class="sub">think about it, jaan...</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="showScreen('screen-final'); revealLetter();">okay fine, yes 💗</button>
+      <button class="btn-no" onclick="showScreen('screen-toobad')">still no</button>
+    </div>
+  </section>
+
+  <!-- Screen 2c: too bad -->
+  <section class="screen" id="screen-toobad">
+    <h1 class="display">too bad. <br>i love you<br>and you have to love me. 😤💕</h1>
+    <p class="sub">that's it, that's the rule.</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="showScreen('screen-final'); revealLetter();">okay okay, fine 🥰</button>
+    </div>
+  </section>
+
+  <!-- Screen 3: final letter -->
+  <section class="screen" id="screen-final">
+    <div class="letter-card">
+      <p class="script" style="font-size:2rem; display:block; margin-bottom:14px;">my jaan,</p>
+
+      <p>i don't know if you'll laugh at this or roll your eyes at your dumbdumb, but i wanted to try something to make you smile — because you deserve softness, especially on the days that feel heavy.</p>
+
+      <p>i love you more than i know how to say. i don't think you realize how proud i am of you — watching you push through school, through the overwhelm, through the days that ask too much of you, and still show up as the incredible person you are. that takes real strength, even on the days you don't feel strong.</p>
+
+      <span class="verse-inline">"She is clothed with strength and dignity; and she shall rejoice in time to come." — Proverbs 31:25</span>
+
+      <p>that's you, jaan. that's exactly you.</p>
+
+      <p>and especially on the days your body is being extra mean to you (yes — period days, i see you 👀) — i just want you to know i'm here. not because i have to be, but because i want to be. always.</p>
+
+      <p>whatever happens, however heavy the world gets, i will always be your safe place. your person. your biggest supporter and your loudest cheerleader — even if it felt like the whole world turned away, i wouldn't. i'm not going anywhere.</p>
+
+      <span class="verse-inline">"Fear thou not; for I am with thee... I will strengthen thee; yea, I will help thee." — Isaiah 41:10</span>
+
+      <p>you are the best thing that has ever happened to me, and i cannot wait to spend forever with you — every ordinary tuesday, every hard day, and every beautiful one, right by your side.</p>
+
+      <div class="sign-off">i love you endlessly.<br>— your dumbdumb 🤍</div>
+    </div>
+
+    <div class="game-wrap">
+      <div class="game-title">a little love, hidden in hearts</div>
+      <div class="game-sub">tap each heart to uncover something for you 💌</div>
+      <div class="counter"><span id="revealCount">0</span> / 8 uncovered</div>
+      <div class="heart-grid" id="heartGrid"></div>
+    </div>
+
+    <div class="final-signature">
+      <div class="big">i love you a lot and forever,</div>
+      <div class="big">to my 1:3 🤍</div>
+      <div class="tiny">from your loving dumbdumb</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // dodging "no" button
+  function dodge(btn){
+    const row = document.getElementById('askRow');
+    const rowRect = row.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    const maxX = rowRect.width - btnRect.width;
+    const maxY = 80;
+    const x = Math.random()*maxX;
+    const y = (Math.random()*maxY) - maxY/2;
+    btn.classList.add('dodging');
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
+  }
+
+  // floating hearts + roses ambient background
+  const fx = document.getElementById('fxLayer');
+  const symbols = ['💗','💕','🌸','🌹','💖','🤍'];
+  function spawnDrift(){
+    const el = document.createElement('div');
+    el.className = 'drift';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    const left = Math.random()*100;
+    const duration = 9 + Math.random()*8;
+    const size = 16 + Math.random()*20;
+    const driftX = (Math.random()*140 - 70) + 'px';
+    const driftR = (Math.random()*60 - 30) + 'deg';
+    el.style.left = left + 'vw';
+    el.style.fontSize = size + 'px';
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--drift-x', driftX);
+    el.style.setProperty('--drift-r', driftR);
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(), duration*1000 + 200);
+  }
+  setInterval(spawnDrift, 650);
+  for(let i=0;i<10;i++) setTimeout(spawnDrift, i*300);
+
+  // mini game: bible verse hearts
+  const verses = [
+    {t:"The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy; he will rest in his love, he will joy over thee with singing.", r:"Zephaniah 3:17"},
+    {t:"I can do all things through Christ which strengtheneth me.", r:"Philippians 4:13"},
+    {t:"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.", r:"Psalm 34:18"},
+    {t:"For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.", r:"Jeremiah 29:11"},
+    {t:"Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up.", r:"1 Corinthians 13:4"},
+    {t:"I am my beloved's, and my beloved is mine.", r:"Song of Solomon 6:3"},
+    {t:"Strength and honour are her clothing; and she shall rejoice in time to come.", r:"Proverbs 31:25"},
+    {t:"Be still, and know that I am God.", r:"Psalm 46:10"}
+  ];
+
+  const grid = document.getElementById('heartGrid');
+  let revealed = 0;
+  verses.forEach((v,i)=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="face front">🤍</div>
+      <div class="face back">
+        <div class="vtext">"${v.t}"</div>
+        <div class="vref">${v.r}</div>
+      </div>
+    `;
+    card.addEventListener('click', ()=>{
+      if(!card.classList.contains('flipped')){
+        revealed++;
+        document.getElementById('revealCount').textContent = revealed;
+      }
+      card.classList.toggle('flipped');
+    });
+    grid.appendChild(card);
+  });
+
+  function revealLetter(){ /* placeholder hook for future effects */ }
+</script>
+
+</body>
+</html>

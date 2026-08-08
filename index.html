@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for my jaan 🤍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF7EF;
+    --blush:#FFD9E1;
+    --lav:#D9CCF0;
+    --rose:#E8607B;
+    --rose-deep:#B23A55;
+    --plum:#5A3B5E;
+    --gold:#D9A566;
+    --line:#f0d9de;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    background:linear-gradient(160deg,var(--cream) 0%,#FBEFF7 45%,#F3E8FA 100%);
+    font-family:'Quicksand',sans-serif;
+    color:var(--plum);
+  }
+  .fx-layer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+  .drift{
+    position:absolute; bottom:-60px; opacity:.7;
+    animation:floatUp linear forwards;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.8; }
+    100%{ transform:translateY(-115vh) translateX(var(--dx,20px)) rotate(var(--dr,20deg)); opacity:0; }
+  }
+  .garland{
+    position:relative; z-index:2; display:flex; justify-content:space-evenly;
+    padding:14px 6vw 0;
+  }
+  .garland .bulb{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 8px 2px rgba(217,165,102,.5);
+    animation:glow 2.4s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%,100%{ opacity:.4; transform:scale(.9); }
+    50%{ opacity:1; transform:scale(1.1); }
+  }
+
+  main{
+    position:relative; z-index:2;
+    max-width:900px; margin:0 auto;
+    padding:28px 22px 70px;
+  }
+  header{ text-align:center; margin-bottom:36px; }
+  h1{
+    font-family:'Playfair Display', serif;
+    font-style:italic; font-weight:600;
+    font-size:clamp(2rem,6vw,3rem);
+    color:var(--rose-deep);
+    margin:0 0 8px;
+  }
+  header p{
+    color:#8a4a5a; font-size:1.02rem; margin:0 auto;
+    max-width:440px; line-height:1.6;
+  }
+
+  #status{
+    text-align:center; font-family:'Caveat',cursive;
+    font-size:1.3rem; color:var(--rose-deep);
+    padding:30px 0;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:18px;
+  }
+  .tile{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px;
+    background:rgba(255,255,255,.65);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:26px 14px;
+    text-decoration:none;
+    color:var(--plum);
+    box-shadow:0 10px 24px rgba(178,58,85,.1);
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+    text-align:center;
+  }
+  .tile:hover{
+    transform:translateY(-4px) scale(1.03);
+    box-shadow:0 16px 34px rgba(178,58,85,.18);
+    background:rgba(255,255,255,.9);
+  }
+  .tile .icon{ font-size:2.4rem; }
+  .tile .name{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:.98rem;
+  }
+
+  footer{
+    text-align:center; margin-top:50px;
+    font-family:'Caveat',cursive; font-size:1.2rem;
+    color:var(--rose-deep);
+  }
+</style>
+</head>
+<body>
+
+<div class="fx-layer" id="fxLayer"></div>
+<div class="garland" id="garland"></div>
+
+<main>
+  <header>
+    <h1>for my jaan 🤍</h1>
+    <p>a little corner of the internet, just for you. tap in whenever you want ✨</p>
+  </header>
+
+  <div id="status">loading your little corner... 💫</div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>made with love, from your dumbdumb</footer>
+
+<script>
+  /* ---------- CONFIG ----------
+     Leave owner/repo as null to auto-detect from the URL
+     (works for both project pages and username.github.io pages).
+     If auto-detect ever misbehaves (e.g. custom domain), just
+     hardcode them here, e.g. owner:'yourGithubUsername', repo:'for-jaan'
+  */
+  const CONFIG = {
+    owner: null,
+    repo: null,
+    path: '',                 // '' = repo root. change if your html files live in a subfolder, e.g. 'pages'
+    exclude: ['index.html', 'README.md', 'readme.md']
+  };
+
+  function detectOwnerRepo(){
+    const host = location.hostname;              // e.g. username.github.io
+    const owner = host.split('.')[0];
+    const parts = location.pathname.split('/').filter(Boolean);
+    let repo;
+    if(parts.length > 0 && !parts[0].includes('.')){
+      repo = parts[0];                            // project page: username.github.io/reponame/
+    } else {
+      repo = `${owner}.github.io`;                 // user page: username.github.io/
+    }
+    return { owner, repo };
+  }
+
+  const iconMap = [
+    { match: ['jaan','love','letter'], icon: '💌' },
+    { match: ['safe','space','vent','calm'], icon: '🌙' },
+    { match: ['game','play'], icon: '🎮' },
+    { match: ['gift'], icon: '🎁' },
+    { match: ['photo','gallery','memor'], icon: '📸' },
+    { match: ['music','playlist','song'], icon: '🎵' },
+    { match: ['note','list'], icon: '📝' },
+  ];
+  const defaultIcons = ['💗','🌸','⭐','🎀','🍯','🦋','🌷','✨','🕊️','🍓'];
+
+  function pickIcon(filename, index){
+    const lower = filename.toLowerCase();
+    for(const entry of iconMap){
+      if(entry.match.some(k => lower.includes(k))) return entry.icon;
+    }
+    return defaultIcons[index % defaultIcons.length];
+  }
+
+  function humanize(filename){
+    let name = filename.replace(/\.html?$/i,'');
+    name = name.replace(/^\d+[-_.]?/,'');           // strip leading numeric ordering prefix like "01-"
+    name = name.replace(/[-_]+/g,' ').trim();
+    return name.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  }
+
+  async function loadTiles(){
+    const statusEl = document.getElementById('status');
+    const gridEl = document.getElementById('grid');
+    const { owner, repo } = (CONFIG.owner && CONFIG.repo) ? CONFIG : detectOwnerRepo();
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${CONFIG.path}`;
+
+    try{
+      const res = await fetch(apiUrl);
+      if(!res.ok) throw new Error('API error');
+      const data = await res.json();
+      if(!Array.isArray(data)) throw new Error('Unexpected response');
+
+      const files = data
+        .filter(item => item.type === 'file' && /\.html?$/i.test(item.name))
+        .filter(item => !CONFIG.exclude.includes(item.name.toLowerCase()))
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+      if(files.length === 0){
+        statusEl.textContent = "nothing here yet — check back soon 🤍";
+        return;
+      }
+
+      localStorage.setItem('jaan_tiles_cache', JSON.stringify(files.map(f=>f.name)));
+      statusEl.style.display = 'none';
+      renderTiles(files.map(f=>f.name));
+    } catch(err){
+      const cached = localStorage.getItem('jaan_tiles_cache');
+      if(cached){
+        statusEl.textContent = "couldn't refresh the list, showing your last visit 💛";
+        renderTiles(JSON.parse(cached));
+      } else {
+        statusEl.textContent = "hmm, this page couldn't load right now — try refreshing in a bit 💛";
+      }
+    }
+  }
+
+  function renderTiles(names){
+    const gridEl = document.getElementById('grid');
+    gridEl.innerHTML = '';
+    names.forEach((name, i) => {
+      const a = document.createElement('a');
+      a.className = 'tile';
+      a.href = name;
+      a.innerHTML = `
+        <div class="icon">${pickIcon(name, i)}</div>
+        <div class="name">${humanize(name)}</div>
+      `;
+      gridEl.appendChild(a);
+    });
+  }
+
+  loadTiles();
+
+  // ambient floating hearts
+  const fx = document.getElementById('fxLayer');
+  const symbols = ['💗','💕','🌸','🤍'];
+  function spawnDrift(){
+    const el = document.createElement('div');
+    el.className = 'drift';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.fontSize = (14 + Math.random()*16) + 'px';
+    const duration = 10 + Math.random()*8;
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--dx', (Math.random()*120-60)+'px');
+    el.style.setProperty('--dr', (Math.random()*50-25)+'deg');
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(), duration*1000+200);
+  }
+  setInterval(spawnDrift, 1200);
+  for(let i=0;i<5;i++) setTimeout(spawnDrift, i*400);
+
+  // garland
+  const garland = document.getElementById('garland');
+  for(let i=0;i<16;i++){
+    const b = document.createElement('div');
+    b.className = 'bulb';
+    b.style.animationDelay = (i*0.15)+'s';
+    garland.appendChild(b);
+  }
+</script>
+
+</body>
+</html>
