@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Something Special Just for You 🤍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8F0;
+    --peach:#FFE1C2;
+    --blush:#FFCFDA;
+    --rose:#E8607B;
+    --rose-deep:#B23A55;
+    --gold:#D9A566;
+    --plum:#5A3B4E;
+    --line:#f0ddd0;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;min-height:100%;
+    background:linear-gradient(160deg,var(--cream) 0%,#FFEFE0 45%,#FDE9EF 100%);
+    font-family:'Quicksand',sans-serif;
+    color:var(--plum);
+  }
+  .fx-layer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+  .drift{ position:absolute; bottom:-60px; opacity:.7; animation:floatUp linear forwards; }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.8; }
+    100%{ transform:translateY(-115vh) translateX(var(--dx,20px)) rotate(var(--dr,20deg)); opacity:0; }
+  }
+
+  main{ position:relative; z-index:2; max-width:820px; margin:0 auto; padding:30px 20px 80px; }
+
+  header.top{ text-align:center; margin-bottom:22px; }
+  header.top h1{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.9rem,5.5vw,2.6rem); color:var(--rose-deep); margin:0 0 6px;
+  }
+  header.top p{ color:#8a5a45; font-size:.98rem; margin:0; }
+
+  nav.tabs{
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+    margin:22px 0 34px;
+  }
+  nav.tabs button{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:.92rem;
+    padding:10px 18px; border-radius:999px; border:1.5px solid var(--line);
+    background:rgba(255,255,255,.6); color:var(--plum); cursor:pointer;
+    transition:all .2s ease;
+  }
+  nav.tabs button:hover{ transform:translateY(-1px); border-color:var(--rose); }
+  nav.tabs button.active{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff; border-color:transparent;
+    box-shadow:0 8px 18px rgba(178,58,85,.25);
+  }
+
+  section.page{ display:none; animation:riseIn .5s ease forwards; }
+  section.page.active{ display:block; }
+  @keyframes riseIn{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .section-title{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    color:var(--rose-deep); font-size:clamp(1.5rem,4.5vw,2rem); text-align:center; margin:0 0 6px;
+  }
+  .section-sub{ text-align:center; color:#8a5a45; font-size:.95rem; margin:0 0 28px; }
+
+  /* ---- reasons flip cards ---- */
+  .card-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:16px; perspective:1000px;
+  }
+  .rcard{ height:160px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.9,.3,1.1); }
+  .rcard.flipped{ transform:rotateY(180deg); }
+  .rface{ position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; display:flex; align-items:center; justify-content:center; padding:14px; text-align:center; }
+  .rface.front{
+    background:linear-gradient(150deg,var(--peach),var(--blush));
+    font-family:'Playfair Display',serif; font-style:italic; font-weight:600;
+    font-size:1.1rem; color:var(--rose-deep); flex-direction:column; gap:6px;
+    box-shadow:0 8px 18px rgba(178,58,85,.15);
+  }
+  .rface.front:hover{ animation:pulse .5s ease; }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .rface.front .num{ font-size:1.7rem; }
+  .rface.back{
+    background:#fff; border:1.5px solid var(--gold); transform:rotateY(180deg);
+    font-size:.92rem; line-height:1.4; color:var(--plum);
+  }
+
+  /* ---- apology ---- */
+  .letter-card{
+    background:rgba(255,255,255,.7); border:1px solid var(--line); border-radius:22px;
+    padding:clamp(22px,4.5vw,36px); text-align:left; box-shadow:0 16px 36px rgba(178,58,85,.12);
+  }
+  .letter-card p{ line-height:1.85; font-size:1.02rem; margin:0 0 15px; }
+  .letter-card .sign{ text-align:right; font-family:'Caveat',cursive; font-size:1.5rem; color:var(--rose-deep); margin-top:10px; }
+  .verse-inline{
+    font-family:'Caveat',cursive; font-size:1.3rem; color:var(--rose-deep); display:block;
+    margin:16px 0; padding:10px 16px; border-left:3px solid var(--gold);
+    background:rgba(217,165,102,.08); border-radius:0 10px 10px 0;
+  }
+
+  /* ---- coupons ---- */
+  .coupon-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; }
+  .coupon{
+    position:relative; background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 10px 24px rgba(178,58,85,.14); border:1.5px dashed var(--gold);
+    padding:20px; display:flex; flex-direction:column; gap:8px; transition:opacity .3s ease;
+  }
+  .coupon .cicon{ font-size:1.8rem; }
+  .coupon .ctitle{ font-family:'Playfair Display',serif; font-style:italic; font-weight:600; color:var(--rose-deep); font-size:1.05rem; }
+  .coupon .cdesc{ font-size:.9rem; color:#6b4a55; line-height:1.4; flex-grow:1; }
+  .coupon .redeem-btn{
+    align-self:flex-start; font-family:'Quicksand',sans-serif; font-weight:700; font-size:.85rem;
+    padding:8px 16px; border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),#c98a4a); color:#fff;
+    box-shadow:0 6px 14px rgba(217,165,102,.35); transition:transform .15s ease;
+  }
+  .coupon .redeem-btn:hover{ transform:translateY(-1px) scale(1.03); }
+  .coupon.used{ opacity:.55; }
+  .coupon .stamp{
+    position:absolute; top:14px; right:-30px; background:var(--rose-deep); color:#fff;
+    font-size:.7rem; font-weight:700; padding:4px 34px; transform:rotate(28deg);
+    letter-spacing:.05em; box-shadow:0 3px 8px rgba(0,0,0,.15); display:none;
+  }
+  .coupon.used .stamp{ display:block; }
+  .coupon .copy-note{ color:var(--rose-deep); font-family:'Caveat',cursive; font-size:1rem; opacity:0; transition:opacity .3s ease; }
+  .coupon .copy-note.show{ opacity:1; }
+
+  /* ---- extras ---- */
+  .extra-tabs{ display:flex; justify-content:center; gap:8px; margin-bottom:26px; flex-wrap:wrap; }
+  .extra-tabs button{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:.88rem;
+    padding:8px 16px; border-radius:999px; border:1.5px solid var(--line);
+    background:rgba(255,255,255,.5); color:var(--plum); cursor:pointer; transition:all .2s ease;
+  }
+  .extra-tabs button.active{ background:var(--rose); color:#fff; border-color:transparent; }
+  .extra-panel{ display:none; text-align:center; }
+  .extra-panel.active{ display:block; }
+
+  .note-box{
+    background:rgba(255,255,255,.7); border:1px solid var(--line); border-radius:20px;
+    padding:36px 24px; max-width:460px; margin:0 auto 18px; min-height:100px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat',cursive; font-size:1.5rem; color:var(--rose-deep); line-height:1.4;
+    transition:opacity .3s ease;
+  }
+  .big-btn{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1rem; padding:13px 28px;
+    border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep)); color:#fff;
+    box-shadow:0 8px 18px rgba(178,58,85,.28); transition:transform .18s ease;
+  }
+  .big-btn:hover{ transform:translateY(-2px) scale(1.03); }
+
+  .spin-visual{
+    width:120px; height:120px; margin:0 auto 20px; border-radius:50%;
+    background:conic-gradient(var(--rose),var(--gold),var(--blush),var(--peach),var(--rose));
+    display:flex; align-items:center; justify-content:center; font-size:2rem;
+    transition:transform 1.4s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 10px 24px rgba(178,58,85,.2);
+  }
+
+  .song-list{ list-style:none; padding:0; margin:0 auto; max-width:480px; text-align:left; }
+  .song-list li{
+    background:rgba(255,255,255,.6); border:1px solid var(--line); border-radius:14px;
+    padding:14px 18px; margin-bottom:12px;
+  }
+  .song-list .stitle{ font-weight:700; color:var(--rose-deep); }
+  .song-list .snote{ font-size:.9rem; color:#6b4a55; margin-top:4px; }
+
+  .pagenav{ display:flex; justify-content:space-between; margin-top:36px; }
+  .pagenav button{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:.9rem;
+    padding:10px 18px; border-radius:999px; border:1.5px solid var(--line);
+    background:rgba(255,255,255,.5); color:var(--plum); cursor:pointer;
+  }
+  .pagenav button:hover{ border-color:var(--rose); }
+
+  footer{ text-align:center; margin-top:50px; font-family:'Caveat',cursive; font-size:1.2rem; color:var(--rose-deep); }
+</style>
+</head>
+<body>
+
+<div class="fx-layer" id="fxLayer"></div>
+
+<main>
+  <header class="top">
+    <h1>Being Random 🤍</h1>
+    <p>a few little things, all in one place</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-page="reasons" class="active">reasons 🃏</button>
+    <button data-page="apology">sorry 💌</button>
+    <button data-page="coupons">coupons 🎟️</button>
+    <button data-page="extras">extras ✨</button>
+  </nav>
+
+  <!-- PAGE 1: reasons -->
+  <section class="page active" id="page-reasons">
+    <div class="section-title">reasons you're amazing</div>
+    <div class="section-sub">tap each card, jaan</div>
+    <span class="verse-inline" style="display:block; text-align:center; max-width:460px; margin:0 auto 28px;">"I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works." — Psalm 139:14</span>
+    <div class="card-grid" id="reasonGrid"></div>
+    <div class="pagenav"><span></span><button onclick="goTo('apology')">next: sorry →</button></div>
+  </section>
+
+  <!-- PAGE 2: apology -->
+  <section class="page" id="page-apology">
+    <div class="section-title">i'm sorry</div>
+    <div class="section-sub">this one's not fun to write, but i mean every word</div>
+    <div class="letter-card">
+      <p>i keep replaying it — how i said i'd give you that time, and then let something else take it instead. i know that stung, especially when time with you is already something we don't get enough of.</p>
+      <p>i'm sorry, jaan. not a rushed, said-to-move-on sorry — a real one. you deserved for me to protect that time, and i didn't. that's on me, not on you, not on whatever got in the way.</p>
+      <span class="verse-inline">"Hatred stirreth up strifes: but love covereth all sins." — Proverbs 10:12</span>
+      <p>i'm not going to list excuses, because none of them undo how it felt on your end. what i can do is actually make it up to you — properly, not just with words. that's what the next page is for.</p>
+      <p>i love you, and i'm going to be a lot more careful with the time i promise you, because you are worth being careful for.</p>
+      <div class="sign">— your dumbdumb 🤍</div>
+    </div>
+    <div class="pagenav"><button onclick="goTo('reasons')">← back</button><button onclick="goTo('coupons')">next: coupons →</button></div>
+  </section>
+
+  <!-- PAGE 3: coupons -->
+  <section class="page" id="page-coupons">
+    <div class="section-title">redeem whenever you want</div>
+    <div class="section-sub">tap redeem, then hit "copy message" and send it to me — that's how i'll know 😊</div>
+    <div class="coupon-grid" id="couponGrid"></div>
+    <div class="pagenav"><button onclick="goTo('apology')">← back</button><button onclick="goTo('extras')">next: extras →</button></div>
+  </section>
+
+  <!-- PAGE 4: extras -->
+  <section class="page" id="page-extras">
+    <div class="section-title">a few extra things</div>
+    <div class="section-sub">pick one</div>
+    <div class="extra-tabs" id="extraTabs">
+      <button data-panel="notes" class="active">surprise me 💌</button>
+      <button data-panel="spin">spin for a date 🎡</button>
+      <button data-panel="songs">our songs 🎵</button>
+      <button data-panel="verses">verses 📖</button>
+    </div>
+
+    <div class="extra-panel active" id="panel-notes">
+      <div class="note-box" id="noteBox">tap the button for a little something 🤍</div>
+      <button class="big-btn" onclick="newNote()">give me a note</button>
+    </div>
+
+    <div class="extra-panel" id="panel-spin">
+      <div class="spin-visual" id="spinVisual">🎡</div>
+      <div class="note-box" id="spinResult" style="margin-top:0;">spin to get a date night idea</div>
+      <button class="big-btn" onclick="doSpin()">spin</button>
+    </div>
+
+    <div class="extra-panel" id="panel-songs">
+      <ul class="song-list" id="songList"></ul>
+    </div>
+
+    <div class="extra-panel" id="panel-verses">
+      <div class="section-sub" style="margin-bottom:18px;">tap a card for a little reminder</div>
+      <div class="card-grid" id="verseGrid"></div>
+    </div>
+
+    <div class="pagenav"><button onclick="goTo('coupons')">← back</button><span></span></div>
+  </section>
+
+  <footer>made with love, from your dumbdumb</footer>
+</main>
+
+<script>
+  /* ---------- tab / page navigation ---------- */
+  const tabButtons = document.querySelectorAll('#tabs button');
+  const pages = document.querySelectorAll('.page');
+  function goTo(name){
+    pages.forEach(p => p.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    tabButtons.forEach(b => b.classList.toggle('active', b.dataset.page === name));
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  tabButtons.forEach(b => b.addEventListener('click', () => goTo(b.dataset.page)));
+
+  /* ---------- reasons flip cards ---------- */
+  const reasons = [
+    "you are always there for me with geniunue love and care that i can see in your eyes.",
+    "the way you care about people, even when you're running on empty yourself.",
+    "your laugh is honestly my favorite sound and your smile is my favorite sight.",
+    "you're one of the hardest working people i know, and you rarely give yourself credit for it.",
+    "you're honest with me, and i never have to guess where i stand with you.",
+    "i love spending time with you because you make me happy and at peace.",
+    "you make every second feel like something worth remembering.",
+    "you're still soft and kind, even after everything that has hurt you and thats makes you strong.",
+    "you notice the little things — and you actually remember them.",
+    "simply put: you. just you, exactly as you are.",
+    "you are my home because my home is you, your presense not a place."
+  ];
+  const reasonGrid = document.getElementById('reasonGrid');
+  reasons.forEach((text,i)=>{
+    const card = document.createElement('div');
+    card.className = 'rcard';
+    card.innerHTML = `
+      <div class="rface front"><span class="num">🤍</span><span>reason ${i+1}</span></div>
+      <div class="rface back">${text}</div>
+    `;
+    card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    reasonGrid.appendChild(card);
+  });
+
+  /* ---------- coupons ---------- */
+  const coupons = [
+    { id:'movie', icon:'🎬', title:'One Movie Night, My Pick', desc:"You choose the movie, snacks included, zero complaints from me." },
+    { id:'study', icon:'📚', title:'Virtual Study Date', desc:"Unlimited redeems. Call me or text me or even VMs, we study together, I'll keep you company through it." },
+    { id:'aux', icon:'🎵', title:'Be the DJ on Our Drive', desc:"One whole hangout or ride, your music only, no excuses." },
+    { id:'vent', icon:'🫶', title:'One Uninterrupted Vent Session', desc:"I just listen. No advice unless you actually ask for it." },
+    { id:'breakfast', icon:'🥞', title:'Breakfast or Brunch or Dinner', desc:"Your choice, a proper pick up with a meal and desert." },
+    { id:'daytogether', icon:'⏳', title:'A Whole Day Of Just Us', desc:"The time I owe you — properly this time, no interruptions." },
+    { id:'hug', icon:'🤗', title:'One Free Hug, Anytime', desc:"No questions asked, redeemable even at 2am." },
+    { id:'chore', icon:'🤗', title:'Cuddles & Nap Time', desc:"No agenda, no talking required, just you, me, and a blanket." }
+  ];
+  const couponGrid = document.getElementById('couponGrid');
+  coupons.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'coupon';
+    el.id = 'coupon-'+c.id;
+    el.innerHTML = `
+      <div class="stamp">redeemed</div>
+      <div class="cicon">${c.icon}</div>
+      <div class="ctitle">${c.title}</div>
+      <div class="cdesc">${c.desc}</div>
+      <button class="redeem-btn">redeem</button>
+      <div class="copy-note">copied — go paste it to me 🤍</div>
+    `;
+    const btn = el.querySelector('.redeem-btn');
+    const note = el.querySelector('.copy-note');
+    btn.addEventListener('click', ()=>{
+      el.classList.add('used');
+      btn.textContent = 'copy message';
+      btn.onclick = async ()=>{
+        const msg = `hey dumbdumb, redeeming my "${c.title}" coupon 🎟️`;
+        try{
+          await navigator.clipboard.writeText(msg);
+          note.classList.add('show');
+          setTimeout(()=>note.classList.remove('show'), 2500);
+        }catch(e){
+          alert(msg);
+        }
+      };
+    }, { once:true });
+    couponGrid.appendChild(el);
+  });
+
+  /* ---------- extras: sub-tabs ---------- */
+  const extraTabs = document.querySelectorAll('#extraTabs button');
+  extraTabs.forEach(b=>{
+    b.addEventListener('click', ()=>{
+      extraTabs.forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.querySelectorAll('.extra-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('panel-'+b.dataset.panel).classList.add('active');
+    });
+  });
+
+  /* ---------- love note generator ---------- */
+  const notes = [
+    "you make even the boring and heavy days feel like the best days.",
+    "i'm so proud of you, more than i probably say out loud and more than anyone else.",
+    "you're allowed to rest. you don't have to earn it, don't burn yourself out jaan.",
+    "whatever today looked like, i'm still in your corner and always will be no space for any doubts.",
+    "you are so much stronger than you think you are, i know you are and i belive in you.",
+    "i chose you then, i choose you now, i'll choose you tomorrow too and forever.",
+    "you don't have to have it all figured out today, we can figure it out tomorrow and together. you are not alone.",
+    "just a reminder: you're doing better than you think, don't let anyone tell you otherwise.",
+    "i love the little things about you that you think no one notices because you are my everything.",
+    "you are my favorite person, easily and the only person i need and are irreplaceable."
+  ];
+  const noteBox = document.getElementById('noteBox');
+  function newNote(){
+    const n = notes[Math.floor(Math.random()*notes.length)];
+    noteBox.style.opacity = 0;
+    setTimeout(()=>{ noteBox.textContent = n; noteBox.style.opacity = 1; }, 200);
+  }
+
+  /* ---------- date night spinner ---------- */
+  const dateIdeas = [
+    "cozy movie night, blankets and all, not forgetting the cuddles",
+    "cook something new together, snacks or food",
+    "long drive, no destination yet, just hand in hand",
+    "picnic somewhere pretty and a walk on the beach during the sunset",
+    "board game night, loser listens to the winner's commands",
+    "stargazing, just talk for hours while you rest on my arm",
+    "try a new restaurant neither of us has been to",
+    "lazy day in, phones away, just cuddling and talking",
+    "a walk on a lazy afternoon, just you and me",
+  ];
+  const spinVisual = document.getElementById('spinVisual');
+  const spinResult = document.getElementById('spinResult');
+  let spinTotal = 0;
+  function doSpin(){
+    spinTotal += 1080 + Math.floor(Math.random()*360);
+    spinVisual.style.transform = `rotate(${spinTotal}deg)`;
+    spinResult.style.opacity = 0;
+    setTimeout(()=>{
+      const idea = dateIdeas[Math.floor(Math.random()*dateIdeas.length)];
+      spinResult.textContent = idea;
+      spinResult.style.opacity = 1;
+    }, 1400);
+  }
+
+  /* ---------- song dedication ---------- */
+  const songs = [
+    { title:'Swim - Chase Atlantic', note:'Cannot forget this, it is what caused us to meet ❤︎' },
+    { title:'Belong Together — Belong Together', note:'You and Me Belong Together. What more can I say ♡' },
+    { title:'Those Eyes — Those Eyes', note:'The most preetiest eyes i have ever seen that i will always get lost in ♡' },
+    { title:'Perfect — Ed Sheeran', note:'Perfect!!! Litteraly no other word can describe you ♡' },
+    { title:'The Man Who Can’t Be Moved — The Script', note:'I am not moving anywhere, I will be here always for you whenever you need me. At the corner of your street ♡' }
+  ];
+  const songList = document.getElementById('songList');
+  songs.forEach(s=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="stitle">${s.title}</div><div class="snote">${s.note}</div>`;
+    songList.appendChild(li);
+  });
+
+  /* ---------- verses grid ---------- */
+  const verses = [
+    { t:"And we know that all things work together for good to them that love God, to them who are the called according to his purpose.", r:"Romans 8:28" },
+    { t:"Casting all your care upon him; for he careth for you.", r:"1 Peter 5:7" },
+    { t:"The LORD is my strength and my shield; my heart trusted in him, and I am helped.", r:"Psalm 28:7" },
+    { t:"Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.", r:"Proverbs 3:5-6" },
+    { t:"Beareth all things, believeth all things, hopeth all things, endureth all things.", r:"1 Corinthians 13:7" },
+    { t:"Thou art all fair, my love; there is no spot in thee.", r:"Song of Solomon 4:7" }
+  ];
+  const verseGrid = document.getElementById('verseGrid');
+  verses.forEach((v,i)=>{
+    const card = document.createElement('div');
+    card.className = 'rcard';
+    card.innerHTML = `
+      <div class="rface front"><span class="num">📖</span><span>verse ${i+1}</span></div>
+      <div class="rface back"><div>"${v.t}"</div><div style="font-family:'Caveat',cursive; font-size:1.1rem; color:var(--rose-deep); margin-top:8px;">${v.r}</div></div>
+    `;
+    card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    verseGrid.appendChild(card);
+  });
+
+  /* ---------- ambient floating hearts ---------- */
+  const fx = document.getElementById('fxLayer');
+  const symbols = ['💗','🌸','🤍','✨'];
+  function spawnDrift(){
+    const el = document.createElement('div');
+    el.className = 'drift';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.fontSize = (14 + Math.random()*16) + 'px';
+    const duration = 10 + Math.random()*8;
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--dx', (Math.random()*120-60)+'px');
+    el.style.setProperty('--dr', (Math.random()*50-25)+'deg');
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(), duration*1000+200);
+  }
+  setInterval(spawnDrift, 1200);
+  for(let i=0;i<5;i++) setTimeout(spawnDrift, i*400);
+</script>
+
+</body>
+</html>
