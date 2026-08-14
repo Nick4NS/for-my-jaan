@@ -137,6 +137,7 @@
   const CONFIG = {
     owner: null,
     repo: null,
+    branch: 'main',            // used only for the jsDelivr fallback below — change to 'master' if that's your default branch
     path: '',                 // '' = repo root. change if your html files live in a subfolder, e.g. 'pages'
     exclude: ['index.html', 'README.md', 'readme.md']
   };
@@ -182,14 +183,56 @@
 
   const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes — avoids re-hitting the API on every reload
 
+  // fetch + normalize the file list from GitHub's own API
+  async function fetchFromGitHub(owner, repo){
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${CONFIG.path}`;
+    const res = await fetch(apiUrl);
+    if(!res.ok) throw new Error('GitHub API error');
+    const data = await res.json();
+    if(!Array.isArray(data)) throw new Error('Unexpected GitHub response');
+    return data
+      .filter(item => item.type === 'file' && /\.html?$/i.test(item.name))
+      .map(item => item.name);
+  }
+
+  // fetch + normalize the file list from jsDelivr's CDN mirror (fallback,
+  // useful when GitHub's API is rate-limited). tries CONFIG.branch first,
+  // then 'master' as a second guess if that branch name doesn't exist.
+  async function fetchFromJsDelivr(owner, repo){
+    const branches = [CONFIG.branch, 'master'].filter((b,i,arr)=> b && arr.indexOf(b)===i);
+    let lastErr;
+    for(const branch of branches){
+      try{
+        const url = `https://data.jsdelivr.com/v1/packages/gh/${owner}/${repo}@${branch}`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('jsDelivr error for branch ' + branch);
+        const data = await res.json();
+        const root = CONFIG.path
+          ? CONFIG.path.split('/').filter(Boolean).reduce((node, seg) => {
+              const next = (node.files || []).find(f => f.name === seg && f.type === 'directory');
+              if(!next) throw new Error('path not found on jsDelivr');
+              return next;
+            }, { files: data.files })
+          : { files: data.files };
+        return (root.files || [])
+          .filter(f => f.type === 'file' && /\.html?$/i.test(f.name))
+          .map(f => f.name);
+      } catch(e){ lastErr = e; }
+    }
+    throw lastErr || new Error('jsDelivr fetch failed');
+  }
+
   async function loadTiles(){
     const statusEl = document.getElementById('status');
     const gridEl = document.getElementById('grid');
 
+    // manual override for troubleshooting: add ?source=cdn or ?source=github to the URL
+    const forcedSource = new URLSearchParams(location.search).get('source');
+
     // if we fetched successfully within the last CACHE_TTL_MS, just reuse it —
-    // no need to call the API again, this is what actually prevents rate-limit hits
+    // no need to call anything again, this is what actually prevents rate-limit hits
     const cachedRaw = localStorage.getItem('jaan_tiles_cache');
-    if(cachedRaw){
+    if(!forcedSource && cachedRaw){
       try{
         const cached = JSON.parse(cachedRaw);
         if(cached.names && cached.ts && (Date.now() - cached.ts) < CACHE_TTL_MS){
@@ -201,34 +244,33 @@
     }
 
     const { owner, repo } = (CONFIG.owner && CONFIG.repo) ? CONFIG : detectOwnerRepo();
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${CONFIG.path}`;
 
-    try{
-      const res = await fetch(apiUrl);
-      if(!res.ok) throw new Error('API error');
-      const data = await res.json();
-      if(!Array.isArray(data)) throw new Error('Unexpected response');
+    const attempts = forcedSource === 'cdn' ? [fetchFromJsDelivr]
+                    : forcedSource === 'github' ? [fetchFromGitHub]
+                    : [fetchFromGitHub, fetchFromJsDelivr]; // default: try GitHub, auto-fallback to jsDelivr
 
-      const files = data
-        .filter(item => item.type === 'file' && /\.html?$/i.test(item.name))
-        .filter(item => !CONFIG.exclude.includes(item.name.toLowerCase()))
-        .sort((a,b) => a.name.localeCompare(b.name));
+    let names = null;
+    for(const fn of attempts){
+      try{ names = await fn(owner, repo); break; } catch(e){ /* try next source */ }
+    }
 
-      if(files.length === 0){
-        statusEl.textContent = "nothing here yet — check back soon 🤍";
-        return;
-      }
+    if(names){
+      names = names
+        .filter(n => !CONFIG.exclude.includes(n.toLowerCase()))
+        .sort((a,b) => a.localeCompare(b));
+    }
 
-      localStorage.setItem('jaan_tiles_cache', JSON.stringify({ names: files.map(f=>f.name), ts: Date.now() }));
+    if(names && names.length > 0){
+      localStorage.setItem('jaan_tiles_cache', JSON.stringify({ names, ts: Date.now() }));
       statusEl.style.display = 'none';
-      renderTiles(files.map(f=>f.name));
-    } catch(err){
-      if(cachedRaw){
-        statusEl.textContent = "couldn't refresh the list, showing your last visit 💛";
-        try{ renderTiles(JSON.parse(cachedRaw).names || []); } catch(e){}
-      } else {
-        statusEl.textContent = "hmm, this page couldn't load right now — try refreshing in a bit 💛";
-      }
+      renderTiles(names);
+    } else if(names){
+      statusEl.textContent = "nothing here yet — check back soon 🤍";
+    } else if(cachedRaw){
+      statusEl.textContent = "couldn't refresh the list, showing your last visit 💛";
+      try{ renderTiles(JSON.parse(cachedRaw).names || []); } catch(e){}
+    } else {
+      statusEl.textContent = "hmm, this page couldn't load right now — try refreshing in a bit 💛";
     }
   }
 
