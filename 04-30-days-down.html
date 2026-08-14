@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 1 Month, Jaan ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Quicksand:wght@400;500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8F0;
+    --peach:#FFE1C2;
+    --blush:#FFCFDA;
+    --rose:#E8607B;
+    --rose-deep:#B23A55;
+    --gold:#D9A566;
+    --plum:#5A3B4E;
+    --line:#f0ddd0;
+    --parchment:#F3E6C8;
+    --sepia:#5B4636;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;width:100%;height:100%;
+    background:linear-gradient(160deg,var(--cream) 0%,#FFEFE0 45%,#FDE9EF 100%);
+    font-family:'Quicksand',sans-serif;color:var(--plum);
+    overflow:hidden;
+  }
+  .fx-layer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+  .drift{ position:absolute; bottom:-60px; opacity:.7; animation:floatUp linear forwards; }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.8; }
+    100%{ transform:translateY(-115vh) translateX(var(--dx,20px)) rotate(var(--dr,20deg)); opacity:0; }
+  }
+
+  #book{ position:relative; width:100%; height:100vh; overflow:hidden; z-index:2; }
+  .page{
+    position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    transform:translateX(100%); opacity:0; pointer-events:none;
+    transition:transform .5s ease, opacity .5s ease;
+    padding:70px 22px 110px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .page.active{ transform:translateX(0); opacity:1; pointer-events:auto; z-index:2; }
+  .page.before{ transform:translateX(-100%); }
+
+  .section-title{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    color:var(--rose-deep); font-size:clamp(1.6rem,5vw,2.3rem); text-align:center; margin:0 0 8px;
+  }
+  .section-sub{ text-align:center; color:#8a5a45; font-size:.95rem; margin:0 0 26px; max-width:460px; }
+
+  /* ---------- nav: arrows + dots ---------- */
+  .nav-arrow{
+    position:fixed; top:50%; transform:translateY(-50%); z-index:10;
+    width:42px; height:42px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(255,255,255,.75); color:var(--rose-deep); font-size:1.2rem;
+    box-shadow:0 6px 16px rgba(178,58,85,.2); transition:opacity .2s ease, transform .2s ease;
+  }
+  .nav-arrow:hover{ transform:translateY(-50%) scale(1.08); }
+  .nav-arrow:disabled{ opacity:0; pointer-events:none; }
+  #prevBtn{ left:14px; }
+  #nextBtn{ right:14px; }
+
+  .dots{
+    position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+    display:flex; gap:9px; z-index:10;
+    background:rgba(255,255,255,.5); padding:8px 12px; border-radius:999px;
+    backdrop-filter:blur(4px);
+  }
+  .dot{ width:8px; height:8px; border-radius:50%; background:rgba(178,58,85,.3); cursor:pointer; transition:all .25s ease; border:none; padding:0; }
+  .dot.active{ background:var(--rose-deep); width:22px; border-radius:6px; }
+
+  /* ---------- mute toggle ---------- */
+  #muteBtn{
+    position:fixed; top:14px; right:14px; z-index:20;
+    width:38px; height:38px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(255,255,255,.75); font-size:1rem; box-shadow:0 6px 16px rgba(178,58,85,.2);
+    display:none; align-items:center; justify-content:center;
+  }
+
+  /* ---------- PAGE 1: intro ---------- */
+  #page-intro{ justify-content:center; }
+  .intro-wrap{ text-align:center; }
+  .intro-wrap h1{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(2rem,7vw,3rem); color:var(--rose-deep); margin:0 0 14px;
+  }
+  .intro-wrap p{ color:#8a5a45; font-size:1.02rem; margin:0 auto 8px; max-width:420px; line-height:1.6; }
+  .intro-wrap .tiny{ font-family:'Caveat',cursive; font-size:1.3rem; color:var(--gold); margin-bottom:30px; display:block; }
+  #enterBtn{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1.05rem; padding:15px 34px;
+    border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep)); color:#fff;
+    box-shadow:0 10px 22px rgba(178,58,85,.3); transition:transform .18s ease;
+  }
+  #enterBtn:hover{ transform:translateY(-2px) scale(1.03); }
+
+  /* ---------- PAGE 2: counter ---------- */
+  #page-counter{ justify-content:center; text-align:center; }
+  #dayHeadline{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.8rem,7vw,3rem); color:var(--rose-deep); margin:0 0 10px;
+  }
+  #page-counter p{ color:#8a5a45; font-size:1rem; max-width:380px; }
+
+  /* ---------- PAGE 3: flip cards ---------- */
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:18px; perspective:1000px; width:100%; max-width:640px; }
+  .rcard{ height:170px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.9,.3,1.1); }
+  .rcard.flipped{ transform:rotateY(180deg); }
+  .rface{ position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; }
+  .rface.front{
+    background:linear-gradient(150deg,var(--peach),var(--blush));
+    font-family:'Playfair Display',serif; font-style:italic; font-weight:600;
+    font-size:1.05rem; color:var(--rose-deep); box-shadow:0 8px 18px rgba(178,58,85,.15);
+  }
+  .rface.front:hover{ animation:pulse .5s ease; }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .rface.back{ background:#fff; border:1.5px solid var(--gold); transform:rotateY(180deg); font-size:.92rem; line-height:1.45; color:var(--plum); }
+
+  /* ---------- PAGE 4: letter ---------- */
+  #page-letter{ justify-content:flex-start; padding-top:50px; }
+  .envelope-stage{ position:relative; width:100%; max-width:420px; margin:0 auto; }
+  .wax-envelope{
+    position:relative; background:linear-gradient(160deg,#EAD9B8,#DCC59C);
+    border-radius:5px 9px 7px 11px; padding:60px 20px; text-align:center;
+    box-shadow:0 14px 30px rgba(90,59,46,.25), inset 0 0 50px rgba(90,59,46,.18), inset 0 0 4px rgba(255,255,255,.4);
+    transition:opacity .5s ease, transform .5s ease;
+    transform:rotate(-0.6deg);
+    overflow:hidden;
+  }
+  .wax-envelope::before{
+    content:''; position:absolute; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.55;
+    background-image:
+      radial-gradient(circle at 15% 25%, rgba(120,86,40,.12) 0, transparent 35%),
+      radial-gradient(circle at 85% 20%, rgba(120,86,40,.08) 0, transparent 30%),
+      radial-gradient(circle at 30% 85%, rgba(120,86,40,.1) 0, transparent 38%),
+      radial-gradient(circle at 75% 70%, rgba(120,86,40,.09) 0, transparent 32%),
+      repeating-linear-gradient(4deg, rgba(90,59,46,.035) 0px, transparent 1.5px, transparent 4px);
+  }
+  .wax-envelope.hidden{ opacity:0; transform:rotate(-0.6deg) scale(.9); pointer-events:none; position:absolute; inset:0; }
+  .wax-envelope p{ font-family:'Caveat',cursive; color:#7a5a3a; font-size:1.1rem; margin-top:20px; }
+  .wax-seal{
+    width:86px; height:86px; border-radius:50%; margin:0 auto; cursor:pointer;
+    background:radial-gradient(circle at 35% 30%, #F3B9C9, #D9718D 65%, #B2506A);
+    box-shadow:inset 0 -4px 8px rgba(0,0,0,.25), inset 0 3px 6px rgba(255,255,255,.35), 0 8px 16px rgba(178,58,85,.3);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#7a2e43; transition:transform .2s ease;
+  }
+  .wax-seal:hover{ transform:scale(1.05); }
+  .wax-seal .heart{ font-size:1.5rem; line-height:1; text-shadow:0 1px 0 rgba(255,255,255,.4), 0 -1px 0 rgba(0,0,0,.15); }
+  .wax-seal .open-txt{ font-family:'Playfair Display',serif; font-style:italic; font-size:.62rem; letter-spacing:.1em; margin-top:2px; text-transform:uppercase; }
+  .wax-seal.cracking{ animation:crack .6s ease forwards; }
+  @keyframes crack{
+    0%{ transform:scale(1) rotate(0deg); opacity:1; }
+    40%{ transform:scale(1.12) rotate(-5deg); }
+    70%{ transform:scale(.9) rotate(4deg); opacity:.6; }
+    100%{ transform:scale(.6) rotate(0deg); opacity:0; }
+  }
+
+  .letter-paper{
+    position:relative;
+    background:linear-gradient(160deg,var(--parchment),#EDDBAF);
+    border-radius:4px 8px 6px 10px; padding:clamp(24px,5vw,42px);
+    box-shadow:0 18px 40px rgba(90,59,46,.25), inset 0 0 60px rgba(90,59,46,.16), inset 0 0 3px rgba(255,255,255,.35);
+    opacity:0; transform:translateY(30px) scale(.92) rotate(0.5deg);
+    transition:opacity .6s ease, transform .6s ease;
+    text-align:left; max-width:520px; margin:0 auto;
+    font-family:'EB Garamond', serif;
+    overflow:hidden;
+  }
+  .letter-paper.show{ opacity:1; transform:translateY(0) scale(1) rotate(0.5deg); }
+  .letter-paper::before{
+    content:''; position:absolute; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.5; z-index:0;
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(120,86,40,.1) 0, transparent 35%),
+      radial-gradient(circle at 90% 30%, rgba(120,86,40,.08) 0, transparent 30%),
+      radial-gradient(circle at 15% 80%, rgba(120,86,40,.09) 0, transparent 36%),
+      radial-gradient(circle at 70% 95%, rgba(120,86,40,.07) 0, transparent 32%),
+      repeating-linear-gradient(2deg, rgba(90,59,46,.03) 0px, transparent 1.5px, transparent 4px);
+  }
+  .letter-paper::after{
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      linear-gradient(rgba(90,59,46,.09) 1px, transparent 1px),
+      linear-gradient(rgba(90,59,46,.09) 1px, transparent 1px);
+    background-size:100% 33.3%, 100% 66.6%;
+    background-repeat:no-repeat;
+    background-position:0 33.3%, 0 66.6%;
+  }
+  .letter-paper > *{ position:relative; z-index:1; }
+  .letter-grid{ display:grid; }
+  .letter-grid > *{ grid-area:1 / 1; }
+  .letter-sizer{ visibility:hidden; }
+  .letter-paper .lp-line{
+    font-size:1.12rem; line-height:1.8; color:var(--sepia); margin:0 0 14px; min-height:1.2em;
+  }
+  .letter-paper .lp-line.verse{ font-style:italic; color:#8a4a2e; border-left:3px solid var(--gold); padding-left:14px; }
+  .letter-paper .lp-line.sign{ font-family:'Caveat',cursive; font-size:1.4rem; color:#8a4a2e; text-align:right; }
+  .cursor-blink{ display:inline-block; width:2px; background:var(--sepia); margin-left:2px; animation:blink 1s step-start infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ---------- PAGE 5: stats ---------- */
+  .stats-list{ list-style:none; padding:0; margin:0 auto; max-width:420px; width:100%; }
+  .stats-list li{
+    background:rgba(255,255,255,.65); border:1px solid var(--line); border-radius:14px;
+    padding:14px 20px; margin-bottom:12px; font-weight:600; color:var(--plum);
+    display:flex; align-items:center; gap:12px; font-size:1rem;
+  }
+  .stats-list li .si{ font-size:1.3rem; }
+
+  /* ---------- PAGE 6: envelopes ---------- */
+  .env-progress{ font-family:'Caveat',cursive; font-size:1.2rem; color:var(--rose-deep); text-align:center; margin-bottom:18px; }
+  .env-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:14px; width:100%; max-width:640px; }
+  .env-heart{
+    background:linear-gradient(150deg,var(--blush),#ffc2d1);
+    border-radius:16px; padding:18px 10px; text-align:center; cursor:pointer;
+    box-shadow:0 8px 18px rgba(178,58,85,.15); transition:transform .2s ease, background .2s ease;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .env-heart:hover{ transform:translateY(-3px) scale(1.03); }
+  .env-heart .eicon{ font-size:1.8rem; }
+  .env-heart .etitle{ font-size:.78rem; font-weight:700; color:var(--rose-deep); line-height:1.25; }
+  .env-heart.opened{ background:linear-gradient(150deg,#fff,var(--peach)); }
+  .env-heart.opened .eicon::after{ content:' ✓'; }
+
+  .bonus-env{
+    margin-top:22px; text-align:center; opacity:0; transform:translateY(14px); pointer-events:none;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .bonus-env.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .bonus-env p{ font-family:'Caveat',cursive; font-size:1.2rem; color:var(--gold); margin-bottom:10px; }
+
+  /* modal for envelope content */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(90,59,46,.45); z-index:50;
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .modal-backdrop.show{ display:flex; }
+  .modal-card{
+    background:linear-gradient(160deg,var(--parchment),#EDDBAF); border-radius:16px;
+    padding:clamp(22px,5vw,34px); max-width:440px; width:100%; text-align:left;
+    box-shadow:0 22px 50px rgba(0,0,0,.3); position:relative;
+    font-family:'EB Garamond',serif; color:var(--sepia);
+  }
+  .modal-card .mtitle{ font-family:'Playfair Display',serif; font-style:italic; color:var(--rose-deep); font-size:1.15rem; margin:0 0 12px; }
+  .modal-card .mtext{ font-size:1.05rem; line-height:1.75; margin:0 0 14px; }
+  .modal-card .mverse{ font-style:italic; color:#8a4a2e; border-left:3px solid var(--gold); padding-left:12px; font-size:.95rem; }
+  .modal-close{
+    position:absolute; top:12px; right:14px; background:none; border:none; font-size:1.3rem;
+    cursor:pointer; color:var(--rose-deep);
+  }
+
+  /* ---------- PAGE 7: reunion pass ---------- */
+  .pass-card{
+    background:#fff; border-radius:18px; overflow:hidden; max-width:480px; width:100%;
+    box-shadow:0 16px 36px rgba(178,58,85,.2); border:1px solid var(--line);
+  }
+  .pass-top{ background:linear-gradient(135deg,var(--rose),var(--rose-deep)); color:#fff; padding:16px 22px; font-family:'Playfair Display',serif; font-style:italic; font-size:1.15rem; display:flex; align-items:center; gap:10px; }
+  .pass-body{ padding:20px 22px; display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+  .pass-field{ display:flex; flex-direction:column; gap:2px; }
+  .pass-field .flabel{ font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); font-weight:700; }
+  .pass-field .fval{ font-weight:700; color:var(--plum); font-size:.95rem; }
+  .pass-divider{ border-top:2px dashed var(--line); margin:0 22px; }
+  .pass-bottom{ padding:14px 22px 18px; display:flex; align-items:center; justify-content:space-between; }
+  .barcode{ display:flex; gap:2px; height:28px; align-items:flex-end; }
+  .barcode span{ width:3px; background:var(--plum); display:inline-block; }
+
+  .date-picker{ display:flex; gap:10px; margin:22px 0; flex-wrap:wrap; justify-content:center; }
+  .date-picker input{
+    font-family:'Quicksand',sans-serif; font-size:.95rem; padding:10px 14px; border-radius:12px;
+    border:1.5px solid var(--line); background:#fff; color:var(--plum);
+  }
+  #claimBtn{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1.05rem; padding:15px 34px;
+    border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),#c98a4a); color:#fff;
+    box-shadow:0 10px 22px rgba(217,165,102,.35); transition:transform .18s ease;
+  }
+  #claimBtn:hover{ transform:translateY(-2px) scale(1.03); }
+  #claimNote{ font-family:'Caveat',cursive; font-size:1.15rem; color:var(--rose-deep); margin-top:14px; min-height:24px; opacity:0; transition:opacity .4s ease; text-align:center; }
+  #claimNote.show{ opacity:1; }
+
+  .signature-outro{
+    margin-top:44px; text-align:center; opacity:0; transform:translateY(10px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .signature-outro.show{ opacity:1; transform:translateY(0); }
+  .signature-outro .stamp{
+    width:70px; height:70px; border-radius:50%; margin:0 auto 10px;
+    background:radial-gradient(circle at 35% 30%, #F3B9C9, #D9718D 65%, #B2506A);
+    box-shadow:inset 0 -3px 6px rgba(0,0,0,.2), 0 6px 14px rgba(178,58,85,.25);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:#7a2e43;
+  }
+  .signature-outro .stext{ font-family:'Caveat',cursive; font-size:1.3rem; color:var(--rose-deep); }
+
+  .confetti-piece{ position:fixed; top:-20px; z-index:60; pointer-events:none; border-radius:2px; }
+
+  @media (max-width: 480px){
+    .pass-body{ grid-template-columns:1fr 1fr; }
+    .nav-arrow{ width:36px; height:36px; font-size:1rem; }
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" src="our-song.mp3" loop preload="none"></audio>
+<div class="fx-layer" id="fxLayer"></div>
+<button id="muteBtn" title="mute/unmute">🔊</button>
+
+<div id="book">
+
+  <!-- PAGE 1: INTRO -->
+  <section class="page active" id="page-intro">
+    <div class="intro-wrap">
+      <h1>Happy 1 Month Jaan❤️</h1>
+      <p>A little digital space made just for you while we count down the days.</p>
+      <span class="tiny">just a small something</span>
+      <button id="enterBtn">step in, jaan 🤍</button>
+    </div>
+  </section>
+
+  <!-- PAGE 2: COUNTER -->
+  <section class="page" id="page-counter">
+    <div id="dayHeadline">— down, infinite to go</div>
+    <p>every single one of them, worth it.</p>
+  </section>
+
+  <!-- PAGE 3: FLIP CARDS -->
+  <section class="page" id="page-cards">
+    <div class="section-title">a few little things</div>
+    <div class="section-sub">tap each card, jaan</div>
+    <div class="card-grid" id="reasonGrid"></div>
+  </section>
+
+  <!-- PAGE 4: LETTER -->
+  <section class="page" id="page-letter">
+    <div class="section-title" style="margin-bottom:22px;">for you</div>
+    <div class="envelope-stage">
+      <div class="wax-envelope" id="waxEnvelope">
+        <div class="wax-seal" id="waxSeal">
+          <span class="heart">❤️</span>
+          <span class="open-txt">open</span>
+        </div>
+        <p>tap the seal, jaan</p>
+      </div>
+      <div class="letter-paper" id="letterPaper">
+        <div class="letter-grid">
+          <div class="letter-sizer" id="letterSizer"></div>
+          <div class="letter-typed" id="letterTyped"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 5: STATS -->
+  <section class="page" id="page-stats">
+    <div class="section-title">us, by the numbers</div>
+    <div class="section-sub">very scientific, very accurate</div>
+    <ul class="stats-list" id="statsList"></ul>
+  </section>
+
+  <!-- PAGE 6: ENVELOPES -->
+  <section class="page" id="page-envelopes">
+    <div class="section-title">open when...</div>
+    <div class="env-progress"><span id="envCount">0</span> / 10 opened</div>
+    <div class="env-grid" id="envGrid"></div>
+    <div class="bonus-env" id="bonusEnv">
+      <p>one more, jaan 👀</p>
+      <div class="env-heart" id="bonusHeart" style="max-width:130px; margin:0 auto;">
+        <div class="eicon">💌</div>
+        <div class="etitle">just for you</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 7: REUNION PASS -->
+  <section class="page" id="page-pass">
+    <div class="section-title">boarding time</div>
+    <div class="section-sub">redeemable anytime, anywhere</div>
+    <div class="pass-card">
+      <div class="pass-top">✈ Reunion Pass</div>
+      <div class="pass-body" id="passBody"></div>
+      <div class="pass-divider"></div>
+      <div class="pass-bottom">
+        <div class="barcode" id="barcode"></div>
+        <div style="font-size:.75rem; color:var(--gold); font-weight:700;">VALID FOREVER</div>
+      </div>
+    </div>
+    <div class="date-picker">
+      <input type="date" id="claimDate">
+      <input type="time" id="claimTime">
+    </div>
+    <button id="claimBtn">claim my date 🎉</button>
+    <div id="claimNote"></div>
+    <div class="signature-outro" id="signatureOutro">
+      <div class="stamp">❤️</div>
+      <div class="stext">made with love, by your dumbdumb</div>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav-arrow" id="prevBtn">←</button>
+<button class="nav-arrow" id="nextBtn">→</button>
+<div class="dots" id="dots"></div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="mtitle" id="modalTitle"></div>
+    <div class="mtext" id="modalText"></div>
+    <div class="mverse" id="modalVerse"></div>
+  </div>
+</div>
+
+<script>
+  /* ================= PAGE NAV ================= */
+  const pageIds = ['page-intro','page-counter','page-cards','page-letter','page-stats','page-envelopes','page-pass'];
+  const pages = pageIds.map(id => document.getElementById(id));
+  let current = 0;
+  const dotsWrap = document.getElementById('dots');
+  pageIds.forEach((id,i)=>{
+    const d = document.createElement('button');
+    d.className = 'dot' + (i===0?' active':'');
+    d.addEventListener('click', ()=> goToPage(i));
+    dotsWrap.appendChild(d);
+  });
+  const dotEls = dotsWrap.querySelectorAll('.dot');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function goToPage(i){
+    if(i < 0 || i >= pages.length) return;
+    pages.forEach((p,idx)=>{
+      p.classList.remove('active','before');
+      if(idx === i) p.classList.add('active');
+      else if(idx < i) p.classList.add('before');
+    });
+    dotEls.forEach((d,idx)=> d.classList.toggle('active', idx===i));
+    prevBtn.disabled = (i===0);
+    nextBtn.disabled = (i===pages.length-1);
+    current = i;
+  }
+  prevBtn.addEventListener('click', ()=> goToPage(current-1));
+  nextBtn.addEventListener('click', ()=> goToPage(current+1));
+  goToPage(0);
+
+  // basic swipe support
+  let touchStartX=0, touchStartY=0;
+  document.getElementById('book').addEventListener('touchstart', e=>{
+    touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+  }, {passive:true});
+  document.getElementById('book').addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)){
+      if(dx < 0) goToPage(current+1); else goToPage(current-1);
+    }
+  }, {passive:true});
+
+  /* ================= MUSIC ================= */
+  const bgMusic = document.getElementById('bgMusic');
+  const muteBtn = document.getElementById('muteBtn');
+  let musicStarted = false;
+  document.getElementById('enterBtn').addEventListener('click', ()=>{
+    if(!musicStarted){
+      bgMusic.volume = 0.6;
+      bgMusic.play().catch(()=>{});
+      musicStarted = true;
+      muteBtn.style.display = 'flex';
+    }
+    goToPage(1);
+  });
+  muteBtn.addEventListener('click', ()=>{
+    bgMusic.muted = !bgMusic.muted;
+    muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
+  });
+
+  /* ================= DAY COUNTER ================= */
+  const startDate = new Date('2026-07-15T00:00:00');
+  function computeDays(){
+    const now = new Date();
+    return Math.max(0, Math.floor((now - startDate) / 86400000));
+  }
+  const daysElapsed = computeDays();
+  document.getElementById('dayHeadline').textContent = `${daysElapsed} days down, infinite to go`;
+
+  /* ================= FLIP CARDS ================= */
+  const cards = [
+    { front:"First Impression vs. Now 🔄\n(Tap to flip)", back:"I knew from our first conversation 3 years ago you were special, but these past 30 days have proven you're even better than I imagined." },
+    { front:"Favourite Moment 🥰\n(Tap to flip)", back:"Being in your embrace, getting lost in your gaze. Making me feel like you're the home I can be in, receiving love, warmth, and care." },
+    { front:"What's Next? ✈️\n(Tap to flip)", back:"A lifetime, countless dates, happy moments. Along with a lot of trials, but I know together there is nothing we cannot overcome." }
+  ];
+  const reasonGrid = document.getElementById('reasonGrid');
+  cards.forEach(c=>{
+    const card = document.createElement('div');
+    card.className = 'rcard';
+    card.innerHTML = `
+      <div class="rface front">${c.front.replace(/\n/g,'<br>')}</div>
+      <div class="rface back">${c.back}</div>
+    `;
+    card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    reasonGrid.appendChild(card);
+  });
+
+  /* ================= LETTER: WAX SEAL + TYPEWRITER ================= */
+  const waxSeal = document.getElementById('waxSeal');
+  const waxEnvelope = document.getElementById('waxEnvelope');
+  const letterPaper = document.getElementById('letterPaper');
+  const letterSizer = document.getElementById('letterSizer');
+  const letterTyped = document.getElementById('letterTyped');
+  const letterLines = [
+    { text:"Jaan,", type:'p' },
+    { text:"one month, thirty days that somehow feel like both a blink and something so much bigger than thirty days should. YES I USED THAN CORRECTLY!", type:'p' },
+    { text:"I think about how nervous I was when I had replied to that snap, and boom, years later, here we are, and you're just..... mine and I'm yours and that still feels a little surreal to say.", type:'p' },
+    { text:"Thank you for trusting me with the real you — the tired you, the stressed you, the silly voice note nursery rhyme you, and definitely the podcast you. I love all of it and all of you, and I don't take that lightly.", type:'p' },
+    { text:'"Many waters cannot quench love, neither can the floods drown it." — Song of Solomon 8:7', type:'verse' },
+    { text:"Whatever this next month holds — good days, hard days, everything that school or exams throw at you — I want to and I will go through it next to you. Not because it's easy, but because it's you.", type:'p' },
+    { text:"You are the greatest thing that has happened to me and I love you so so so much. I want to be the very best for you, supporting you and loving you always.", type:'p' },
+    { text:"Happy one month, Jaan. Here's to countless lifetimes more after this.", type:'sign' }
+  ];
+
+  function lineClass(lineData){
+    return 'lp-line' + (lineData.type==='verse' ? ' verse' : lineData.type==='sign' ? ' sign' : '');
+  }
+
+  // build the invisible sizer once, at full final text, so the paper's
+  // height is reserved from the very first frame it appears
+  letterLines.forEach(lineData=>{
+    const p = document.createElement('div');
+    p.className = lineClass(lineData);
+    p.textContent = lineData.text;
+    letterSizer.appendChild(p);
+  });
+
+  waxSeal.addEventListener('click', ()=>{
+    waxSeal.classList.add('cracking');
+    setTimeout(()=>{
+      waxEnvelope.classList.add('hidden');
+      letterPaper.classList.add('show');
+      typeLetter();
+    }, 550);
+  });
+
+  function typeLetter(){
+    let li = 0;
+    function nextLine(){
+      if(li >= letterLines.length) return;
+      const lineData = letterLines[li];
+      const p = document.createElement('div');
+      p.className = lineClass(lineData);
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor-blink';
+      p.appendChild(cursor);
+      letterTyped.appendChild(p);
+      let ci = 0;
+      const text = lineData.text;
+      const interval = setInterval(()=>{
+        if(ci < text.length){
+          cursor.insertAdjacentText('beforebegin', text[ci]);
+          ci++;
+        } else {
+          clearInterval(interval);
+          cursor.remove();
+          li++;
+          setTimeout(nextLine, 350);
+        }
+      }, 16);
+    }
+    nextLine();
+  }
+
+  /* ================= STATS ================= */
+  const stats = [
+    { icon:'📅', text:`${daysElapsed} days together` },
+    { icon:'☀️', text:'countless good morning texts' },
+    { icon:'💗', text:'1 favorite person (you)' },
+    { icon:'😂', text:'infinite inside jokes' },
+    { icon:'🤍', text:'unlimited "i love you"s' },
+    { icon:'📍', text:'1000% missing you every second' },
+    { icon:'✅', text:'100% worth it' }
+  ];
+  const statsList = document.getElementById('statsList');
+  stats.forEach(s=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="si">${s.icon}</span><span>${s.text}</span>`;
+    statsList.appendChild(li);
+  });
+
+  /* ================= ENVELOPES ================= */
+  const envelopes = [
+    { icon:'💌', title:'Open right now', text:"Happy 1 Month! Thank you for making this past month so light, fun, and meaningful. I couldn't be happier that we're doing this. Here's to our very first milestone of many. I am so glad I am yours and I am so grateful for having you. I love you so much and I just want to spend the rest of my days with you.", verse:'' },
+    { icon:'🥺', title:'Open when you miss me', text:"If you're reading this, you're probably missing me right now — good, because I miss you too, more than I let on most days. Distance doesn't change anything about how I feel, it just makes me count the hours until I see you again.", verse:'"Whither thou goest, I will go... for whither thou lodgest, I will lodge." — Ruth 1:16' },
+    { icon:'😂', title:'Open when you need a laugh', text:"MONICAAAAAAAA!! How could you?!!! (also — you still owe me a rematch, and we both know you're going to lose again.)", verse:'"A merry heart doeth good like a medicine." — Proverbs 17:22' },
+    { icon:'🌧️', title:'Open on a rough day', text:"Whatever today looked like, it doesn't get the final word. You've survived every hard day so far, and you'll survive this one too. I'm proud of you, even on the days you don't feel proud of yourself.", verse:'"We are troubled on every side, yet not distressed; we are perplexed, but not in despair." — 2 Corinthians 4:8' },
+    { icon:'🌙', title:'Open before you sleep', text:"Wherever you are right now, whatever today held — I hope it's easier to rest knowing someone's thinking about you. Sleep well, jaan. I'll be here in the morning.", verse:'"I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety." — Psalm 4:8' },
+    { icon:'😮\u200d💨', title:'Open when school/family feels like too much', text:"I know things outside of us have been heavy lately — school piling up, family stuff weighing on you. You don't have to carry it perfectly. You're doing more than enough, even on the days it doesn't feel like it. I am always here for you and will be forever by your side, no matter what.", verse:'"Be careful for nothing; but in every thing by prayer and supplication... let your requests be made known unto God." — Philippians 4:6' },
+    { icon:'🖤', title:"Open when you're doubting yourself", text:"Whatever that voice in your head is telling you right now — that voice is the devil's work, don't let it get to you. God is always looking after you, and so am I.", verse:'"God hath not given us the spirit of fear; but of power, and of love, and of a sound mind." — 2 Timothy 1:7' },
+    { icon:'✨', title:'Open on a random Tuesday, just because', text:"No occasion, no reason — I just wanted you to have something good waiting for you today. That's it. That's the whole message.", verse:'"This is the day which the LORD hath made; we will rejoice and be glad in it." — Psalm 118:24' },
+    { icon:'🫶', title:'Open when you want to feel closer to me', text:"Close your eyes for a second and imagine I'm right there with you. That's not really a metaphor either — you're always in my heart, my mind, and my soul, jaan.", verse:'"I am my beloved\'s, and my beloved is mine." — Song of Solomon 2:16' },
+    { icon:'🤍', title:"Open whenever you need reminding you're loved", text:"However far, however hard, however long — nothing gets between how much I love you. Not distance, not a bad day, not anything. You are loved. Completely, always.", verse:'"Neither death, nor life... shall be able to separate us from the love of God." — Romans 8:38-39' }
+  ];
+  const bonusEnvelope = { title:'just for you', text:"I knew it, you opened everything, didn't you. That's very you. But thank you for reading every single word, because this effort is only for you, and I meant every one and every word of it. Mwahh.", verse:'"Set me as a seal upon thine heart... for love is strong as death." — Song of Solomon 8:6' };
+
+  const envGrid = document.getElementById('envGrid');
+  const envCountEl = document.getElementById('envCount');
+  const bonusEnvWrap = document.getElementById('bonusEnv');
+  let openedCount = 0;
+  const openedSet = new Set();
+
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+  const modalVerse = document.getElementById('modalVerse');
+
+  function openModal(env){
+    modalTitle.textContent = env.title;
+    modalText.textContent = env.text;
+    modalVerse.textContent = env.verse || '';
+    modalBackdrop.classList.add('show');
+  }
+  document.getElementById('modalClose').addEventListener('click', ()=> modalBackdrop.classList.remove('show'));
+  modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) modalBackdrop.classList.remove('show'); });
+
+  envelopes.forEach((env,i)=>{
+    const el = document.createElement('div');
+    el.className = 'env-heart';
+    el.innerHTML = `<div class="eicon">${env.icon}</div><div class="etitle">${env.title}</div>`;
+    el.addEventListener('click', ()=>{
+      openModal(env);
+      if(!openedSet.has(i)){
+        openedSet.add(i);
+        openedCount++;
+        envCountEl.textContent = openedCount;
+        el.classList.add('opened');
+        if(openedCount === envelopes.length){
+          bonusEnvWrap.classList.add('show');
+        }
+      }
+    });
+    envGrid.appendChild(el);
+  });
+
+  document.getElementById('bonusHeart').addEventListener('click', ()=> openModal(bonusEnvelope));
+
+  /* ================= REUNION PASS ================= */
+  const passFields = [
+    { label:'Passenger', val:'Jaan' },
+    { label:'From', val:'Missing You' },
+    { label:'To', val:'Together Again' },
+    { label:'Gate', val:'Anytime' },
+    { label:'Seat', val:'Yours, Mine, Ours' },
+    { label:'Class', val:'Forever' },
+    { label:'Flight No.', val:`1MO-${String(daysElapsed).padStart(3,'0')}` },
+    { label:'Boarding', val:"Whenever You're Free" }
+  ];
+  const passBody = document.getElementById('passBody');
+  passFields.forEach(f=>{
+    const div = document.createElement('div');
+    div.className = 'pass-field';
+    div.innerHTML = `<span class="flabel">${f.label}</span><span class="fval">${f.val}</span>`;
+    passBody.appendChild(div);
+  });
+  const barcode = document.getElementById('barcode');
+  for(let i=0;i<28;i++){
+    const bar = document.createElement('span');
+    bar.style.height = (10 + Math.random()*18) + 'px';
+    barcode.appendChild(bar);
+  }
+
+  const claimBtn = document.getElementById('claimBtn');
+  const claimNote = document.getElementById('claimNote');
+  const signatureOutro = document.getElementById('signatureOutro');
+  claimBtn.addEventListener('click', ()=>{
+    const dateVal = document.getElementById('claimDate').value;
+    const timeVal = document.getElementById('claimTime').value;
+    let msg = "your jaan is demanding a date, let's go 🎉";
+    if(dateVal){
+      msg += ` — ${dateVal}`;
+      if(timeVal) msg += ` at ${timeVal}`;
+    }
+    burstConfetti();
+    navigator.clipboard.writeText(msg).then(()=>{
+      claimNote.textContent = 'copied — now go tell him 💌';
+      claimNote.classList.add('show');
+    }).catch(()=>{
+      claimNote.textContent = msg;
+      claimNote.classList.add('show');
+    });
+    signatureOutro.classList.add('show');
+  });
+
+  function burstConfetti(){
+    const colors = ['#E8607B','#D9A566','#FFCFDA','#B23A55','#FFE1C2'];
+    for(let i=0;i<60;i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = 6 + Math.random()*6;
+      piece.style.width = size+'px';
+      piece.style.height = (size*0.4)+'px';
+      piece.style.left = Math.random()*100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(piece);
+      const duration = 2200 + Math.random()*1400;
+      const drift = (Math.random()*160 - 80);
+      piece.animate([
+        { transform: piece.style.transform + ' translateY(0)', opacity:1 },
+        { transform: `rotate(${Math.random()*720}deg) translateY(100vh) translateX(${drift}px)`, opacity:0.9 }
+      ], { duration, easing:'cubic-bezier(.3,.6,.4,1)' });
+      setTimeout(()=> piece.remove(), duration+100);
+    }
+  }
+
+  /* ================= AMBIENT FLOATING HEARTS ================= */
+  const fx = document.getElementById('fxLayer');
+  const symbols = ['💗','🌸','🤍','✨'];
+  function spawnDrift(){
+    const el = document.createElement('div');
+    el.className = 'drift';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.fontSize = (14 + Math.random()*16) + 'px';
+    const duration = 10 + Math.random()*8;
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--dx', (Math.random()*120-60)+'px');
+    el.style.setProperty('--dr', (Math.random()*50-25)+'deg');
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(), duration*1000+200);
+  }
+  setInterval(spawnDrift, 1400);
+  for(let i=0;i<4;i++) setTimeout(spawnDrift, i*400);
+</script>
+
+</body>
+</html>
