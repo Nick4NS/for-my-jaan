@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Weather Report 🌦️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --storm-dark:#4A5268;
+    --storm-mid:#6B7390;
+    --storm-light:#9AA3BC;
+    --sun-peach:#FFD9A8;
+    --sun-gold:#F0A868;
+    --blush:#FFCFDA;
+    --rose:#E8607B;
+    --rose-deep:#B23A55;
+    --gold:#D9A566;
+    --plum:#5A3B4E;
+    --cream:#FFF8F0;
+    --line:#f0ddd0;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;min-height:100%;
+    font-family:'Quicksand',sans-serif;color:var(--plum);
+    background:var(--cream);
+    overflow-x:hidden;
+  }
+
+  #muteBtn{
+    position:fixed; top:14px; right:14px; z-index:30;
+    width:38px; height:38px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(255,255,255,.8); font-size:1rem; box-shadow:0 6px 16px rgba(0,0,0,.15);
+    display:none; align-items:center; justify-content:center;
+  }
+
+  header.top{ text-align:center; padding:26px 18px 6px; }
+  header.top h1{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.6rem,5.5vw,2.3rem); color:var(--rose-deep); margin:0 0 6px;
+  }
+  header.top p{ color:#8a5a45; font-size:.92rem; margin:0; }
+
+  nav.tabs{
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+    padding:18px 12px 8px; position:relative; z-index:5;
+  }
+  nav.tabs button{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:.86rem;
+    padding:9px 16px; border-radius:999px; border:1.5px solid var(--line);
+    background:rgba(255,255,255,.7); color:var(--plum); cursor:pointer;
+    transition:all .2s ease;
+  }
+  nav.tabs button.active{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff; border-color:transparent;
+    box-shadow:0 8px 18px rgba(178,58,85,.25);
+  }
+
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation:riseIn .5s ease; }
+  @keyframes riseIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);} }
+
+  .section-title{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    text-align:center; font-size:clamp(1.4rem,4.5vw,1.9rem); margin:0 0 6px;
+  }
+  .section-sub{ text-align:center; font-size:.92rem; margin:0 0 24px; }
+  .verse-inline{
+    font-family:'Caveat',cursive; font-size:1.2rem; display:block; text-align:center;
+    max-width:440px; margin:0 auto 24px; padding:10px 16px;
+    border-left:3px solid var(--gold); background:rgba(217,165,102,.08); border-radius:0 10px 10px 0;
+  }
+
+  /* ---------- TAB 1: FORECAST ---------- */
+  #tab-forecast{
+    position:relative; min-height:calc(100vh - 150px); overflow:hidden;
+    border-radius:22px; margin:0 16px 30px;
+  }
+  .storm-bg{
+    position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg, var(--storm-dark), var(--storm-mid) 60%, var(--storm-light));
+    transition:opacity 1.4s ease;
+  }
+  .sunrise-bg{
+    position:absolute; inset:0; z-index:0; opacity:0;
+    background:linear-gradient(180deg, #FFEFD6, var(--sun-peach) 55%, var(--blush));
+    transition:opacity 1.4s ease;
+  }
+  .raindrop{
+    position:absolute; top:-10%; width:2px; height:60px;
+    background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.5));
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-10vh); opacity:0; }
+    10%{ opacity:.7; }
+    100%{ transform:translateY(110vh); opacity:0; }
+  }
+  .rain-layer{ position:absolute; inset:0; z-index:1; overflow:hidden; transition:opacity 1s ease; }
+  .rain-layer.stopped{ opacity:0; }
+
+  .flash{
+    position:absolute; inset:0; z-index:2; background:#fff; opacity:0; pointer-events:none;
+  }
+  .flash.strike{ animation:lightning .5s ease; }
+  @keyframes lightning{
+    0%{ opacity:0; } 8%{ opacity:.9; } 16%{ opacity:.1; } 22%{ opacity:.7; } 30%{ opacity:0; } 100%{ opacity:0; }
+  }
+
+  .sun-heart{ position:absolute; bottom:-40px; z-index:1; opacity:.85; animation:riseHeart linear forwards; pointer-events:none; }
+  @keyframes riseHeart{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    10%{ opacity:.9; }
+    100%{ transform:translateY(-90vh) translateX(var(--hx,20px)); opacity:0; }
+  }
+
+  .forecast-content{
+    position:relative; z-index:3; padding:60px 22px 50px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; min-height:calc(100vh - 150px);
+    justify-content:center;
+  }
+  #forecastHeadline{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.4rem,5.5vw,2rem); color:#fff; margin:0 0 26px; max-width:420px;
+    text-shadow:0 2px 10px rgba(0,0,0,.25);
+    transition:color .8s ease, text-shadow .8s ease;
+  }
+  #forecastHeadline.cleared{ color:var(--rose-deep); text-shadow:none; }
+
+  #clearSkiesBtn{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:1rem; padding:14px 30px;
+    border-radius:999px; border:none; cursor:pointer;
+    background:rgba(255,255,255,.92); color:var(--storm-dark);
+    box-shadow:0 10px 22px rgba(0,0,0,.2); transition:transform .18s ease, opacity .4s ease;
+  }
+  #clearSkiesBtn:hover{ transform:translateY(-2px) scale(1.03); }
+  #clearSkiesBtn.hidden-btn{ opacity:0; pointer-events:none; height:0; padding:0; overflow:hidden; margin:0; }
+
+  .apology-reveal{
+    opacity:0; transform:translateY(16px); max-width:480px;
+    transition:opacity .8s ease .3s, transform .8s ease .3s;
+  }
+  .apology-reveal.show{ opacity:1; transform:translateY(0); }
+  .apology-reveal p{
+    font-size:1.02rem; line-height:1.8; color:var(--plum); text-align:left;
+    background:rgba(255,255,255,.75); border-radius:18px; padding:24px 26px;
+    box-shadow:0 14px 30px rgba(178,58,85,.15); margin:0 0 18px;
+  }
+
+  /* ---------- TAB 2: STICKY NOTES ---------- */
+  .note-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:20px; perspective:1000px; max-width:680px; margin:0 auto; padding:0 16px 40px;
+  }
+  .note{ height:170px; cursor:pointer; position:relative; transform-style:preserve-3d; transform:rotate(var(--tilt,0deg)); transition:transform .6s cubic-bezier(.2,.9,.3,1.1); }
+  .note.flipped{ transform:rotate(var(--tilt,0deg)) rotateY(180deg); }
+  .note-face{
+    position:absolute; inset:0; backface-visibility:hidden; border-radius:4px;
+    display:flex; align-items:center; justify-content:center; padding:18px; text-align:center;
+    box-shadow:0 10px 20px rgba(0,0,0,.12);
+  }
+  .note-face.front{
+    font-size:1.8rem; flex-direction:column; gap:8px;
+    font-family:'Playfair Display', serif; font-style:italic; font-size:.85rem; color:#7a5a2e;
+  }
+  .note-face.front:hover{ animation:pulse .5s ease; }
+  @keyframes pulse{ 0%,100%{transform:scale(1) rotate(var(--tilt,0deg));} 50%{transform:scale(1.05) rotate(var(--tilt,0deg));} }
+  .note-face.back{
+    background:#fff; border:1px solid rgba(0,0,0,.08); transform:rotateY(180deg);
+    font-size:.9rem; line-height:1.45; color:var(--plum);
+  }
+  .note:nth-child(5n+1) .note-face.front{ background:#FFF3B0; }
+  .note:nth-child(5n+2) .note-face.front{ background:#FFD6E0; }
+  .note:nth-child(5n+3) .note-face.front{ background:#C9E4FF; }
+  .note:nth-child(5n+4) .note-face.front{ background:#D8F5D0; }
+  .note:nth-child(5n+5) .note-face.front{ background:#F0D9FF; }
+
+  /* ---------- TAB 3: RECHARGE STATION ---------- */
+  .ticket-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; max-width:680px; margin:0 auto; padding:0 16px 40px; }
+  .ticket{
+    position:relative; background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 10px 24px rgba(178,58,85,.14); border:1.5px dashed var(--gold);
+    padding:20px; display:flex; flex-direction:column; gap:8px; transition:opacity .3s ease;
+  }
+  .ticket .ticon{ font-size:1.8rem; }
+  .ticket .ttitle{ font-family:'Playfair Display',serif; font-style:italic; font-weight:600; color:var(--rose-deep); font-size:1.02rem; }
+  .ticket .tdesc{ font-size:.88rem; color:#6b4a55; line-height:1.4; flex-grow:1; }
+  .ticket .redeem-btn{
+    align-self:flex-start; font-family:'Quicksand',sans-serif; font-weight:700; font-size:.82rem;
+    padding:8px 15px; border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),#c98a4a); color:#fff;
+    box-shadow:0 6px 14px rgba(217,165,102,.35); transition:transform .15s ease;
+  }
+  .ticket .redeem-btn:hover{ transform:translateY(-1px) scale(1.03); }
+  .ticket.used{ opacity:.55; }
+  .ticket .stamp{
+    position:absolute; top:14px; right:-30px; background:var(--rose-deep); color:#fff;
+    font-size:.68rem; font-weight:700; padding:4px 34px; transform:rotate(28deg);
+    letter-spacing:.05em; box-shadow:0 3px 8px rgba(0,0,0,.15); display:none;
+  }
+  .ticket.used .stamp{ display:block; }
+  .ticket .copy-note{ color:var(--rose-deep); font-family:'Caveat',cursive; font-size:1rem; opacity:0; transition:opacity .3s ease; }
+  .ticket .copy-note.show{ opacity:1; }
+
+  footer{ text-align:center; padding:30px 16px 40px; font-family:'Caveat',cursive; font-size:1.15rem; color:var(--rose-deep); }
+
+  @media (max-width:480px){
+    #tab-forecast{ margin:0 10px 24px; border-radius:16px; }
+    .forecast-content{ padding:44px 16px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop preload="none"></audio>
+<button id="muteBtn">🔊</button>
+
+<header class="top">
+  <h1>Our Weather Report 🌦️</h1>
+  <p>a little forecast, just for us</p>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="forecast" class="active">the forecast</button>
+  <button data-tab="unbreakable">why we're unbreakable</button>
+  <button data-tab="recharge">the recharge station</button>
+</nav>
+
+<!-- TAB 1: FORECAST -->
+<section class="tab-panel active" id="tab-forecast">
+  <div class="storm-bg" id="stormBg"></div>
+  <div class="sunrise-bg" id="sunriseBg"></div>
+  <div class="rain-layer" id="rainLayer"></div>
+  <div class="flash" id="flash"></div>
+  <div class="forecast-content">
+    <div id="forecastHeadline">Warning: temporary turbulence detected in our relationship.</div>
+    <button id="clearSkiesBtn">clear the skies ☀️</button>
+    <div class="apology-reveal" id="apologyReveal">
+      <p>jaan,<br><br>
+      i've been sitting with what happened, and i don't want to rush past it just because a little animation says the storm is over. i'm sorry — for my part in it, for how i handled it, and for how it made you feel. you didn't deserve that, and i should have done better, plain and simple. i'm not going to explain it away, because whatever the reason, it doesn't undo how it landed on your end. what i can promise is that i heard you, i'm taking it seriously, and i'm going to be better because of it. i love you so so much, and you're the best and greatest thing to me. i'm not going anywhere — not when it's easy, and definitely not when it's hard.</p>
+      <span class="verse-inline" style="color:var(--rose-deep);">"When thou passest through the waters, I will be with thee... when thou walkest through the fire, thou shalt not be burned." — Isaiah 43:2</span>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2: UNBREAKABLE -->
+<section class="tab-panel" id="tab-unbreakable">
+  <div class="section-title" style="color:var(--rose-deep);">why we're unbreakable</div>
+  <div class="section-sub" style="color:#8a5a45;">tap each note, jaan</div>
+  <span class="verse-inline">"A threefold cord is not quickly broken." — Ecclesiastes 4:12</span>
+  <div class="note-grid" id="noteGrid"></div>
+</section>
+
+<!-- TAB 3: RECHARGE -->
+<section class="tab-panel" id="tab-recharge">
+  <div class="section-title" style="color:var(--rose-deep);">the recharge station</div>
+  <div class="section-sub" style="color:#8a5a45;">tap redeem, then copy the message to me</div>
+  <span class="verse-inline">"Plans to give you hope and a future." — Jeremiah 29:11</span>
+  <div class="ticket-grid" id="ticketGrid"></div>
+  <footer>made with love, by your dumbdumb</footer>
+</section>
+
+<script>
+  /* ================= TABS ================= */
+  const tabButtons = document.querySelectorAll('#tabs button');
+  const panels = document.querySelectorAll('.tab-panel');
+  tabButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      panels.forEach(p=>p.classList.remove('active'));
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ================= MUSIC (filename matches this html file's name) ================= */
+  const bgMusic = document.getElementById('bgMusic');
+  const muteBtn = document.getElementById('muteBtn');
+  const htmlFile = location.pathname.split('/').pop() || 'index.html';
+  const audioFile = htmlFile.replace(/\.html?$/i, '') + '.mp3';
+  bgMusic.src = audioFile;
+  let musicStarted = false;
+  function startMusic(){
+    if(musicStarted) return;
+    musicStarted = true;
+    bgMusic.volume = 0.6;
+    bgMusic.play().catch(()=>{});
+    muteBtn.style.display = 'flex';
+  }
+  muteBtn.addEventListener('click', ()=>{
+    bgMusic.muted = !bgMusic.muted;
+    muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
+  });
+
+  /* ================= TAB 1: RAIN + CLEAR SKIES ================= */
+  const rainLayer = document.getElementById('rainLayer');
+  for(let i=0;i<45;i++){
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random()*100 + '%';
+    drop.style.animationDuration = (0.6 + Math.random()*0.6) + 's';
+    drop.style.animationDelay = (Math.random()*2) + 's';
+    rainLayer.appendChild(drop);
+  }
+
+  const stormBg = document.getElementById('stormBg');
+  const sunriseBg = document.getElementById('sunriseBg');
+  const flash = document.getElementById('flash');
+  const forecastHeadline = document.getElementById('forecastHeadline');
+  const clearSkiesBtn = document.getElementById('clearSkiesBtn');
+  const apologyReveal = document.getElementById('apologyReveal');
+  const forecastContent = document.querySelector('.forecast-content');
+
+  function spawnSunHearts(){
+    for(let i=0;i<18;i++){
+      setTimeout(()=>{
+        const h = document.createElement('div');
+        h.className = 'sun-heart';
+        h.textContent = ['💗','🤍','✨','🌸'][Math.floor(Math.random()*4)];
+        h.style.left = Math.random()*100 + '%';
+        h.style.fontSize = (14 + Math.random()*16) + 'px';
+        const duration = 5 + Math.random()*4;
+        h.style.animationDuration = duration + 's';
+        h.style.setProperty('--hx', (Math.random()*100-50)+'px');
+        forecastContent.parentElement.appendChild(h);
+        setTimeout(()=> h.remove(), duration*1000+200);
+      }, i*180);
+    }
+  }
+
+  clearSkiesBtn.addEventListener('click', ()=>{
+    startMusic();
+    flash.classList.add('strike');
+    setTimeout(()=>{
+      stormBg.style.opacity = '0';
+      sunriseBg.style.opacity = '1';
+      rainLayer.classList.add('stopped');
+      forecastHeadline.textContent = 'Forecast: stronger than ever.';
+      forecastHeadline.classList.add('cleared');
+      clearSkiesBtn.classList.add('hidden-btn');
+      apologyReveal.classList.add('show');
+      spawnSunHearts();
+      setInterval(spawnSunHearts, 6000);
+    }, 250);
+  });
+
+  /* ================= TAB 2: STICKY NOTES ================= */
+  const notes = [
+    "the way we always end up laughing again, even after we've been stubborn about it for a whole day.",
+    "we've disagreed before and found our way back every single time. this isn't different.",
+    "you're the only person I want to figure hard things out with, even when it's messy.",
+    "our worst days together are still better than most people's best days.",
+    "we're really good at being annoying to each other and somehow still choosing each other anyway."
+  ];
+  const noteGrid = document.getElementById('noteGrid');
+  notes.forEach(text=>{
+    const tilt = (Math.random()*6 - 3).toFixed(1);
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.style.setProperty('--tilt', tilt+'deg');
+    note.innerHTML = `
+      <div class="note-face front">📌<br>tap to read</div>
+      <div class="note-face back">${text}</div>
+    `;
+    note.addEventListener('click', ()=> note.classList.toggle('flipped'));
+    noteGrid.appendChild(note);
+  });
+
+  /* ================= TAB 3: RECHARGE TICKETS ================= */
+  const tickets = [
+    { icon:'🎬', title:'Comfort Food Movie Night', desc:'Your pick, all the snacks, zero judgment, cuddles non-negotaiable.' },
+    { icon:'🌿', title:'Stress-Free Weekend Adventure', desc:'No plans, no pressure, just us with a side of mwahs.' },
+    { icon:'🗣️', title:'Uninterrupted Talk-It-Out Pass', desc:'Redeemable anytime we need to actually hash something out, calmly.' },
+    { icon:'😴', title:'Nap Session', desc:'Cuddles, Mwah Mwahs, falling asleep together with tigh hugs.' }
+  ];
+  const ticketGrid = document.getElementById('ticketGrid');
+  tickets.forEach(t=>{
+    const el = document.createElement('div');
+    el.className = 'ticket';
+    el.innerHTML = `
+      <div class="stamp">redeemed</div>
+      <div class="ticon">${t.icon}</div>
+      <div class="ttitle">${t.title}</div>
+      <div class="tdesc">${t.desc}</div>
+      <button class="redeem-btn">redeem</button>
+      <div class="copy-note">copied — go paste it to me 🤍</div>
+    `;
+    const btn = el.querySelector('.redeem-btn');
+    const note = el.querySelector('.copy-note');
+    btn.addEventListener('click', ()=>{
+      el.classList.add('used');
+      btn.textContent = 'copy message';
+      btn.onclick = async ()=>{
+        const msg = `hey dumbdumb, redeeming my "${t.title}" pass 🎟️`;
+        try{
+          await navigator.clipboard.writeText(msg);
+          note.classList.add('show');
+          setTimeout(()=>note.classList.remove('show'), 2500);
+        }catch(e){ alert(msg); }
+      };
+    }, { once:true });
+    ticketGrid.appendChild(el);
+  });
+</script>
+
+</body>
+</html>
