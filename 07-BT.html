@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Belong Together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1b19;--paper:#dcd3c4;--card:#fbf8f1}
+*{box-sizing:border-box;margin:0}
+body{min-height:100svh;background:#b9ae9c;display:flex;justify-content:center;font-family:"Patrick Hand","Comic Sans MS",cursive;color:var(--ink)}
+.poster{position:relative;width:min(440px,100%);min-height:100svh;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");padding:max(22px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.25)}
+@media(min-width:600px){body{align-items:center;padding:2rem 0}.poster{min-height:0;border-radius:6px}}
+.top{display:flex;justify-content:space-between;align-items:flex-start;height:70px}
+.logo{display:flex;align-items:center;gap:8px;font:700 1.45rem "Patrick Hand",sans-serif}
+.logo svg{width:38px;height:38px}
+.stamp{width:104px;height:70px;margin-top:-4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 6px;margin-top:10px;position:relative}
+.pol{background:var(--card);padding:6px;box-shadow:0 3px 8px rgba(0,0,0,.3);position:relative}
+.pol:nth-child(1){transform:rotate(-1.4deg)}
+.pol:nth-child(2){transform:rotate(1.2deg);margin-top:4px}
+.pol:nth-child(3){transform:rotate(-.9deg)}
+.pol:nth-child(4){transform:rotate(1.4deg);margin-top:4px}
+.pol img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center 30%;background:linear-gradient(145deg,#cbbfae,#a99c88)}
+.tape{position:absolute;width:64px;height:20px;background:rgba(215,200,170,.75);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.t1{top:-9px;right:18px;transform:rotate(3deg)}
+.t2{bottom:8px;left:-18px;transform:rotate(-38deg)}
+.dd{position:absolute;width:26px;height:24px;fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:32px;height:30px;fill:#fbf8f1;stroke:var(--ink);stroke-width:1.8}
+.info{display:flex;justify-content:space-between;align-items:flex-start;margin-top:22px}
+.info h1{font:400 2.1rem/1.1 "Patrick Hand",sans-serif}
+.info p{font-size:1.2rem;opacity:.85}
+#like{width:40px;height:40px;margin-top:6px}
+#like svg{width:34px;height:34px;fill:none;stroke:var(--ink);stroke-width:2;transition:.3s}
+#like.on svg{fill:#c0392b;stroke:#c0392b}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:none;margin-top:14px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--ink);border-radius:3px}
+input[type=range]::-moz-range-track{height:4px;background:var(--ink);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);margin-top:-7px}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;background:var(--ink)}
+.tm{display:flex;justify-content:space-between;font-size:.95rem}
+.ctl{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:0 4px}
+button{border:0;background:none;color:var(--ink);cursor:pointer;display:grid;place-items:center;font:inherit}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.ctl svg{width:30px;height:30px;fill:currentColor;stroke:none}
+.ctl .st svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ctl .on{opacity:1}.ctl .st{opacity:.55}.ctl .st.on{opacity:1}
+#pp{width:78px;height:78px;border-radius:50%;background:var(--ink);color:var(--paper)}
+#pp svg{width:34px;height:34px}
+.bot{position:relative;height:120px;margin-top:6px}
+.note{position:absolute;left:0;bottom:8px;font:500 1.35rem/1.25 Caveat,cursive;transform:rotate(-11deg);transform-origin:left bottom;width:190px}
+.stone{position:absolute;right:2px;bottom:0;width:98px;height:88px;border-radius:52% 48% 50% 50%/55% 50% 50% 45%;background:radial-gradient(ellipse at 40% 30%,#e4dfd6,#b3ac9f);box-shadow:0 6px 10px rgba(0,0,0,.3);display:grid;place-items:center;transform:rotate(-8deg)}
+.stone svg{width:60px;height:60px;stroke:#4a463f;fill:none;stroke-width:2.4;opacity:.85}
+#err{display:none;text-align:center;font-size:.9rem;color:#8a2c20;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="top">
+    <div class="logo"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#1d1b19"/><g fill="none" stroke="#dcd3c4" stroke-width="3.4" stroke-linecap="round"><path d="M11 18c9-3 20-2 27 2"/><path d="M13 26c8-2.4 16-1.6 22 1.6"/><path d="M15 33c6-1.6 12-1 16.5 1.2"/></g></svg>Spotify</div>
+    <svg class="stamp" viewBox="0 0 104 70" fill="none" stroke="#1d1b19" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="38" cy="34" r="30" stroke-dasharray="3 3"/><circle cx="38" cy="34" r="22"/><path d="M38 47s-12-7-12-15a6.5 6.5 0 0 1 12-3 6.5 6.5 0 0 1 12 3c0 8-12 15-12 15z" fill="#1d1b19"/><path d="M70 22c7-4 12 4 19 0s9-3 13-1M70 32c7-4 12 4 19 0s9-3 13-1M70 42c7-4 12 4 19 0s9-3 13-1"/></svg>
+  </div>
+
+  <div class="grid" id="grid">
+    <div class="pol"><span class="tape t1" style="display:none"></span><img alt=""></div>
+    <div class="pol"><span class="tape t1"></span><img alt=""></div>
+    <div class="pol"><span class="tape t2"></span><img alt=""></div>
+    <div class="pol"><img alt=""></div>
+    <svg class="mid" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20S3 14.5 3 8.5A4.6 4.6 0 0 1 12 6.4 4.6 4.6 0 0 1 21 8.5C21 14.5 12 20 12 20z"/></svg>
+  </div>
+
+  <div class="info">
+    <div><h1 id="ti"></h1><p id="ar"></p></div>
+    <button id="like" aria-label="Like"><svg viewBox="0 0 24 22"><path d="M12 20S3 14.5 3 8.5A4.6 4.6 0 0 1 12 6.4 4.6 4.6 0 0 1 21 8.5C21 14.5 12 20 12 20z"/></svg></button>
+  </div>
+  <input type="range" id="bar" min="0" max="100" step="0.1" value="0" aria-label="Seek">
+  <div class="tm"><span id="tc">0:00</span><span id="td">0:00</span></div>
+  <div class="ctl">
+    <button class="st" id="sh" aria-label="Shuffle"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+    <button id="pv" aria-label="Restart"><svg viewBox="0 0 24 24"><path d="M6 5h2.5v14H6zM20 5v14L9.5 12z"/></svg></button>
+    <button id="pp" aria-label="Play"></button>
+    <button id="nx" aria-label="Restart"><svg viewBox="0 0 24 24"><path d="M15.5 5H18v14h-2.5zM4 5v14l10.5-7z"/></svg></button>
+    <button class="st" id="rp" aria-label="Repeat"><svg viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+  </div>
+  <p id="err">Song not found. Check SONG_PATH at the top of the script.</p>
+
+  <div class="bot">
+    <div class="note" id="note"></div>
+    <div class="stone"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" stroke-dasharray="2.5 3"/><circle cx="30" cy="30" r="20"/><path d="M30 41s-10-6-10-12.5a5.5 5.5 0 0 1 10-2.6 5.5 5.5 0 0 1 10 2.6C40 35 30 41 30 41z" fill="#4a463f"/></svg></div>
+  </div>
+</div>
+
+<script>
+/* ===== EDIT ME ===== */
+const SONG_PATH="100/belongtogether.mp3";   // path to your song file
+const TITLE="Belong Together";
+const ARTIST="Mark Ambor";
+const NOTE="Different days, same us... always together";
+const PHOTOS=["BT/1.jpg","BT/2.jpg","BT/3.jpg","BT/4.jpg"]; // your 4 photos, top-left, top-right, bottom-left, bottom-right
+/* ==================== */
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,"0");
+const fmt=t=>isFinite(t)?Math.floor(t/60)+":"+pad(Math.floor(t%60)):"0:00";
+$("ti").textContent=TITLE;$("ar").textContent=ARTIST;$("note").textContent=NOTE;
+document.querySelectorAll(".pol img").forEach((im,i)=>{im.src=PHOTOS[i];im.onerror=()=>im.removeAttribute("src")});
+
+// scattered hand-drawn hearts
+const H='<svg class="dd" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20S3 14.5 3 8.5A4.6 4.6 0 0 1 12 6.4 4.6 4.6 0 0 1 21 8.5C21 14.5 12 20 12 20z"/></svg>';
+[[1,20,-12],[94,22,14],[1,43,-8],[94,43,10]].forEach(([x,y,r])=>{
+ const d=document.createElement("div");d.innerHTML=H;const s=d.firstChild;
+ s.style.cssText=`left:${x}%;top:${y}%;transform:rotate(${r}deg)`;document.querySelector(".poster").appendChild(s)});
+
+// player
+const au=new Audio(SONG_PATH);
+const PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+$("pp").innerHTML=PLAY;
+au.onplay=()=>$("pp").innerHTML=PAUSE;au.onpause=()=>$("pp").innerHTML=PLAY;
+au.onerror=()=>$("err").style.display="block";
+au.ontimeupdate=()=>{$("bar").value=au.duration?au.currentTime/au.duration*100:0;$("tc").textContent=fmt(au.currentTime)};
+au.onloadedmetadata=()=>$("td").textContent=fmt(au.duration);
+$("bar").oninput=e=>{if(au.duration)au.currentTime=e.target.value/100*au.duration};
+$("pp").onclick=()=>au.paused?au.play().catch(()=>{}):au.pause();
+$("pv").onclick=$("nx").onclick=()=>{au.currentTime=0};
+$("rp").onclick=()=>{au.loop=!au.loop;$("rp").classList.toggle("on",au.loop)};
+$("sh").onclick=()=>$("sh").classList.toggle("on");
+$("like").onclick=()=>$("like").classList.toggle("on");
+</script>
+</body>
+</html>
